@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — Novara</title>
+  <meta name="description" content="Novara Terms of Service — the rules and guidelines for using the Novara app." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #F56630; --orange-mid: #F89874; --purple: #20134B;
+      --white: #FFFFFF; --grey-50: #F9FAFB; --grey-100: #F0F2F5;
+      --grey-200: #E4E7EC; --grey-400: #98A2B3; --grey-600: #475367;
+      --text: #20134B; --nav-bg: rgba(255,255,255,0.92); --radius-md: 16px;
+    }
+    [data-theme="dark"] {
+      --white: #0D0820; --grey-50: #120A29; --grey-100: #170D35;
+      --grey-200: #1D1144; --grey-400: #9892AC; --grey-600: #BAB6C7;
+      --text: #E9E7ED; --nav-bg: rgba(13,8,32,0.92);
+    }
+    html { scroll-behavior: smooth; }
+    h1,h2,h3,h4,h5,h6 { font-family: 'Bricolage Grotesque', sans-serif; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); line-height: 1.45; -webkit-font-smoothing: antialiased; transition: background .3s, color .3s; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--grey-200); }
+    .nav-inner { max-width: 1160px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--grey-600);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform .2s, opacity .2s;
+    }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; border: none; cursor: pointer; text-decoration: none; transition: transform .15s, background .15s; }
+    .btn-primary { background: var(--orange); color: white; padding: 10px 22px; border-radius: 100px; box-shadow: 0 2px 8px rgba(245,102,48,.35); }
+    .btn-primary:hover { background: #DF5D2C; }
+    .nav-btn-short { display: none; }
+    .nav-theme-item { display: none; }
+    .nav-theme-btn {
+      display: flex; align-items: center; gap: 12px;
+      background: none; border: none; cursor: pointer;
+      padding: 16px 0; font-size: 16px; font-weight: 600;
+      color: var(--text); width: 100%; text-align: left;
+    }
+    .nav-theme-btn i { font-size: 18px; }
+    .nav-theme-lbl-dark { display: inline; }
+    .nav-theme-lbl-light { display: none; }
+    [data-theme="dark"] .nav-theme-lbl-dark { display: none !important; }
+    [data-theme="dark"] .nav-theme-lbl-light { display: inline !important; }
+    .theme-toggle {
+      background: none; border: 1px solid var(--grey-200);
+      border-radius: 50%; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text); flex-shrink: 0;
+      transition: background .2s, border-color .2s;
+    }
+    .theme-toggle:hover { background: var(--grey-100); border-color: var(--grey-400); }
+    .theme-toggle .icon-moon { display: block; }
+    .theme-toggle .icon-sun  { display: none; }
+    [data-theme="dark"] .theme-toggle .icon-moon { display: none !important; }
+    [data-theme="dark"] .theme-toggle .icon-sun  { display: block !important; }
+    .nav-mobile-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(32,19,75,.5); z-index: 99;
+    }
+    .nav-mobile-overlay.open { display: block; }
+    [data-theme="dark"] .nav-links.open { background: var(--grey-50); }
+    [data-theme="dark"] .nav-links li { border-bottom-color: var(--grey-200); }
+    [data-theme="dark"] .nav-links a { color: var(--text); }
+    [data-theme="dark"] .nav-mobile-overlay { background: rgba(0,0,0,.6); }
+    [data-theme="dark"] .nav-logo svg path[fill="#20134B"] { fill: #E9E7ED; }
+    @media (max-width: 860px) {
+      .nav-btn-full { display: none; }
+      .nav-btn-short { display: inline; }
+      .theme-toggle { display: none; }
+      .nav-links {
+        display: none; position: fixed; top: 64px;
+        left: 0; right: 0; background: var(--white);
+        flex-direction: column; padding: 24px; gap: 0;
+        box-shadow: 0 16px 48px rgba(32,19,75,.14); z-index: 100;
+        border-bottom: 1px solid var(--grey-200);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links li { border-bottom: 1px solid var(--grey-100); }
+      .nav-links a { display: block; padding: 16px 0; font-size: 16px; font-weight: 600; color: var(--text); }
+      .nav-hamburger { display: flex; }
+      .nav-theme-item { display: block !important; }
+      .footer-links-group { gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .footer-links-group { flex-direction: column; gap: 20px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+
+    .page-hero { background: var(--purple); padding: 80px 24px 64px; text-align: center; }
+    .page-hero .breadcrumb { font-size: 13px; color: rgba(255,255,255,.55); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .page-hero .breadcrumb a { color: rgba(255,255,255,.55); text-decoration: none; }
+    .page-hero .breadcrumb a:hover { color: rgba(255,255,255,.8); }
+    .page-hero h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 700; line-height: 1; letter-spacing: -.04em; color: white; margin-bottom: 16px; }
+    .page-hero p { font-size: 16px; color: rgba(255,255,255,.65); max-width: 480px; margin: 0 auto; }
+
+    .page-content { max-width: 760px; margin: 0 auto; padding: 64px 24px 96px; }
+    .last-updated { font-size: 13px; color: var(--grey-400); margin-bottom: 48px; padding-bottom: 24px; border-bottom: 1px solid var(--grey-200); }
+    .page-content h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--text); margin: 48px 0 16px; }
+    .page-content h3 { font-size: 17px; font-weight: 600; color: var(--text); margin: 28px 0 10px; }
+    .page-content p { font-size: 16px; color: var(--grey-600); line-height: 1.7; margin-bottom: 16px; }
+    .page-content ul, .page-content ol { padding-left: 24px; margin-bottom: 16px; }
+    .page-content li { font-size: 16px; color: var(--grey-600); line-height: 1.7; margin-bottom: 8px; }
+    .page-content a { color: var(--orange); text-decoration: none; }
+    .page-content a:hover { text-decoration: underline; }
+    .highlight-box { background: var(--grey-50); border: 1px solid var(--grey-200); border-left: 4px solid var(--orange); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 20px 24px; margin: 24px 0; }
+    .highlight-box p { margin: 0; }
+
+    footer { background: var(--purple); border-top: 1px solid rgba(255,255,255,.08); padding: 60px 24px 40px; }
+    .footer-inner { max-width: 1160px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 48px; margin-bottom: 48px; flex-wrap: wrap; }
+    .footer-brand p { font-size: 14px; color: rgba(255,255,255,.55); margin-top: 16px; max-width: 260px; line-height: 1.45; }
+    .footer-links-group { display: flex; gap: 64px; flex-wrap: wrap; }
+    .footer-col h4 { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { font-size: 14px; color: rgba(255,255,255,.65); text-decoration: none; transition: color .2s; }
+    .footer-col a:hover { color: white; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top: 32px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .footer-bottom p { font-size: 12px; color: rgba(255,255,255,.45); }
+    .footer-bottom-links { display: flex; gap: 24px; list-style: none; }
+    .footer-bottom-links a { font-size: 12px; color: rgba(255,255,255,.45); text-decoration: none; transition: color .2s; }
+    .footer-bottom-links a:hover { color: rgba(255,255,255,.7); }
+    .footer-social { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .social-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .15s; color: rgba(255,255,255,.7);
+      text-decoration: none; flex-shrink: 0;
+    }
+    .social-btn:hover { background: rgba(255,255,255,.18); transform: translateY(-2px); color: white; }
+    .social-btn svg { width: 16px; height: 16px; display: block; }
+    .footer-download {
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+      padding: 28px 0; border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .footer-store-btn { display: inline-block; transition: opacity .2s, transform .15s; line-height: 0; }
+    .footer-store-btn:hover { opacity: .85; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="Novara home">
+      <svg width="122" height="32" viewBox="0 0 122 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#nl-clip)">
+          <path d="M26.117 8.4707H36.4699L27.5287 23.5295H17.1758L26.117 8.4707Z" fill="#F56630"/>
+          <path d="M16.7068 8.4707H24.2362L15.295 23.5295H7.76562L16.7068 8.4707Z" fill="#FA9874"/>
+          <path d="M9.17555 8.4707H14.8226L5.88143 23.5295H0.234375L9.17555 8.4707Z" fill="#FCB59A"/>
+        </g>
+        <path d="M42.8241 21.952V10.048H45.5156V12.3894L45.2968 11.9737C45.574 11.2588 46.0262 10.7191 46.6535 10.3544C47.2954 9.97507 48.0394 9.78542 48.8855 9.78542C49.7608 9.78542 50.534 9.97507 51.205 10.3544C51.8907 10.7337 52.4232 11.2661 52.8024 11.9518C53.1817 12.6228 53.3714 13.4033 53.3714 14.2932V21.952H50.5048V14.9715C50.5048 14.4464 50.4027 13.9941 50.1985 13.6148C49.9942 13.2355 49.7097 12.9438 49.345 12.7395C48.9949 12.5207 48.5792 12.4113 48.0977 12.4113C47.6309 12.4113 47.2152 12.5207 46.8504 12.7395C46.4857 12.9438 46.2013 13.2355 45.997 13.6148C45.7928 13.9941 45.6907 14.4464 45.6907 14.9715V21.952H42.8241Z" fill="#20134B"/>
+        <path d="M61.6161 22.2146C60.449 22.2146 59.3841 21.9447 58.4213 21.4049C57.473 20.8652 56.7144 20.1285 56.1455 19.1948C55.5911 18.2612 55.314 17.1962 55.314 16C55.314 14.8038 55.5911 13.7388 56.1455 12.8052C56.7144 11.8715 57.473 11.1348 58.4213 10.5951C59.3695 10.0553 60.4344 9.78542 61.6161 9.78542C62.7831 9.78542 63.8408 10.0553 64.789 10.5951C65.7373 11.1348 66.4886 11.8715 67.0429 12.8052C67.6118 13.7242 67.8963 14.7892 67.8963 16C67.8963 17.1962 67.6118 18.2612 67.0429 19.1948C66.474 20.1285 65.7154 20.8652 64.7671 21.4049C63.8189 21.9447 62.7686 22.2146 61.6161 22.2146ZM61.6161 19.5887C62.258 19.5887 62.8196 19.4355 63.301 19.1292C63.797 18.8228 64.1836 18.3998 64.4608 17.86C64.7526 17.3057 64.8984 16.6857 64.8984 16C64.8984 15.2998 64.7526 14.6871 64.4608 14.1619C64.1836 13.6221 63.797 13.1991 63.301 12.8927C62.8196 12.5718 62.258 12.4113 61.6161 12.4113C60.9596 12.4113 60.3834 12.5718 59.8874 12.8927C59.3914 13.1991 58.9975 13.6221 58.7057 14.1619C58.4286 14.6871 58.29 15.2998 58.29 16C58.29 16.6857 58.4286 17.3057 58.7057 17.86C58.9975 18.3998 59.3914 18.8228 59.8874 19.1292C60.3834 19.4355 60.9596 19.5887 61.6161 19.5887Z" fill="#20134B"/>
+        <path d="M73.4452 21.952L68.7624 10.048H71.8916L75.2833 19.4137H74.1236L77.5372 10.048H80.6664L75.9836 21.952H73.4452Z" fill="#20134B"/>
+        <path d="M85.434 22.2146C84.6025 22.2146 83.8803 22.076 83.2676 21.7988C82.6549 21.5217 82.1808 21.1278 81.8453 20.6172C81.5098 20.092 81.342 19.4866 81.342 18.8009C81.342 18.1445 81.4879 17.5609 81.7796 17.0504C82.0714 16.5252 82.5236 16.0875 83.1363 15.7374C83.7491 15.3873 84.5222 15.1393 85.4559 14.9934L89.3509 14.3588V16.5471L86.0029 17.116C85.434 17.2181 85.0109 17.4005 84.7338 17.6631C84.4566 17.9257 84.318 18.2685 84.318 18.6915C84.318 19.1 84.4712 19.4282 84.7775 19.6762C85.0985 19.9097 85.4923 20.0264 85.9592 20.0264C86.5573 20.0264 87.0825 19.9024 87.5347 19.6544C88.0015 19.3918 88.3589 19.0344 88.6069 18.5821C88.8695 18.1299 89.0008 17.6339 89.0008 17.0941V14.0306C89.0008 13.52 88.7966 13.0969 88.3881 12.7614C87.9942 12.4113 87.4691 12.2362 86.8126 12.2362C86.1999 12.2362 85.6528 12.404 85.1714 12.7395C84.7046 13.0605 84.3618 13.4908 84.1429 14.0306L81.8015 12.8927C82.0349 12.2654 82.3996 11.7257 82.8956 11.2734C83.4062 10.8066 84.0043 10.4419 84.69 10.1793C85.3756 9.91671 86.1196 9.78542 86.922 9.78542C87.8994 9.78542 88.7601 9.96777 89.5041 10.3325C90.2481 10.6826 90.8244 11.1786 91.2328 11.8205C91.6559 12.4478 91.8674 13.1845 91.8674 14.0306V21.952H89.154V19.9169L89.7667 19.8732C89.4603 20.3838 89.0956 20.8141 88.6726 21.1642C88.2495 21.4998 87.7681 21.7624 87.2284 21.952C86.6886 22.1271 86.0905 22.2146 85.434 22.2146Z" fill="#20134B"/>
+        <path d="M94.5169 21.952V10.048H97.2084V12.6958L96.9896 12.3019C97.2668 11.412 97.6971 10.792 98.2806 10.4419C98.8788 10.0918 99.5936 9.91671 100.425 9.91671H101.125V12.4551H100.097C99.2799 12.4551 98.6235 12.7104 98.1275 13.2209C97.6315 13.7169 97.3835 14.4172 97.3835 15.3217V21.952H94.5169Z" fill="#20134B"/>
+        <path d="M106.312 22.2146C105.48 22.2146 104.758 22.076 104.146 21.7988C103.533 21.5217 103.059 21.1278 102.723 20.6172C102.388 20.092 102.22 19.4866 102.22 18.8009C102.22 18.1445 102.366 17.5609 102.658 17.0504C102.949 16.5252 103.402 16.0875 104.014 15.7374C104.627 15.3873 105.4 15.1393 106.334 14.9934L110.229 14.3588V16.5471L106.881 17.116C106.312 17.2181 105.889 17.4005 105.612 17.6631C105.335 17.9257 105.196 18.2685 105.196 18.6915C105.196 19.1 105.349 19.4282 105.656 19.6762C105.976 19.9097 106.37 20.0264 106.837 20.0264C107.435 20.0264 107.96 19.9024 108.413 19.6544C108.88 19.3918 109.237 19.0344 109.485 18.5821C109.748 18.1299 109.879 17.6339 109.879 17.0941V14.0306C109.879 13.52 109.675 13.0969 109.266 12.7614C108.872 12.4113 108.347 12.2362 107.691 12.2362C107.078 12.2362 106.531 12.404 106.049 12.7395C105.583 13.0605 105.24 13.4908 105.021 14.0306L102.68 12.8927C102.913 12.2654 103.278 11.7257 103.774 11.2734C104.284 10.8066 104.882 10.4419 105.568 10.1793C106.254 9.91671 106.998 9.78542 107.8 9.78542C108.777 9.78542 109.638 9.96777 110.382 10.3325C111.126 10.6826 111.702 11.1786 112.111 11.8205C112.534 12.4478 112.745 13.1845 112.745 14.0306V21.952H110.032V19.9169L110.645 19.8732C110.338 20.3838 109.974 20.8141 109.551 21.1642C109.128 21.4998 108.646 21.7624 108.106 21.952C107.567 22.1271 106.968 22.2146 106.312 22.2146Z" fill="#20134B"/>
+        <defs>
+          <clipPath id="nl-clip">
+            <rect width="36.7059" height="15.0588" fill="white" transform="translate(0 8.4707)"/>
+          </clipPath>
+        </defs>
+      </svg>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#features">Features</a></li>
+      <li><a href="index.html#how-it-works">How it works</a></li>
+      <li><a href="index.html#passport">Passport</a></li>
+      <li><a href="index.html#friends">Compare</a></li>
+      <li class="nav-theme-item">
+        <button class="nav-theme-btn" aria-label="Toggle dark mode" onclick="toggleTheme()">
+          <i class="ph-fill ph-moon icon-moon"></i>
+          <i class="ph-fill ph-sun icon-sun"></i>
+          <span class="nav-theme-lbl-dark">Switch to dark mode</span>
+          <span class="nav-theme-lbl-light">Switch to light mode</span>
+        </button>
+      </li>
+    </ul>
+    <a href="index.html#download" class="btn btn-primary"><span class="nav-btn-full">Download Free</span><span class="nav-btn-short">Download</span></a>
+    <button class="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()">
+      <i class="ph-fill ph-moon icon-moon"></i>
+      <i class="ph-fill ph-sun icon-sun"></i>
+    </button>
+    <button class="nav-hamburger" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('open');document.querySelector('.nav-mobile-overlay').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-mobile-overlay" onclick="document.querySelector('.nav-links').classList.remove('open');this.classList.remove('open')"></div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="breadcrumb">
+    <a href="index.html">Home</a>
+    <i class="ph ph-caret-right"></i>
+    <span>Terms of Service</span>
+  </div>
+  <h1>Terms of Service</h1>
+  <p>The rules and guidelines for using Novara.</p>
+</div>
+
+<div class="page-content">
+  <p class="last-updated">Last updated: 24 March 2026</p>
+
+  <div class="highlight-box">
+    <p>By downloading or using Novara, you agree to these Terms. Please read them carefully — they're written to be clear and fair. If you don't agree, please don't use the app.</p>
+  </div>
+
+  <h2>1. Acceptance of Terms</h2>
+  <p>These Terms of Service ("Terms") govern your access to and use of the Novara mobile application and website (collectively, the "Service"), operated by Novara Ltd ("Novara", "we", "us", or "our").</p>
+  <p>By creating an account or using the Service, you confirm that you are at least 13 years of age and accept these Terms and our <a href="privacy.html">Privacy Policy</a>.</p>
+
+  <h2>2. Your Account</h2>
+  <p>You are responsible for maintaining the security of your account and for all activity that occurs under it. You agree to:</p>
+  <ul>
+    <li>Provide accurate and truthful information when creating your account</li>
+    <li>Keep your password secure and not share it with others</li>
+    <li>Notify us immediately of any unauthorised access to your account</li>
+    <li>Not create accounts for others or use another person's account</li>
+  </ul>
+
+  <h2>3. Acceptable Use</h2>
+  <p>You may use Novara to track your personal travel, connect with friends, and explore the app's features. You agree not to:</p>
+  <ul>
+    <li>Use the Service for any unlawful or fraudulent purpose</li>
+    <li>Upload or transmit harmful, offensive, or misleading content</li>
+    <li>Attempt to reverse engineer, hack, or interfere with the Service</li>
+    <li>Use automated tools to access the Service without our written consent</li>
+    <li>Impersonate another person or entity</li>
+    <li>Collect or harvest other users' data without their consent</li>
+  </ul>
+
+  <h2>4. Your Content</h2>
+  <p>You retain ownership of the content you add to Novara (travel logs, trip notes, photos). By using the Service, you grant us a limited licence to store, display, and sync your content for the purpose of providing the Service to you.</p>
+  <p>We do not claim ownership of your personal travel data. You can export or delete it at any time.</p>
+
+  <h2>5. Intellectual Property</h2>
+  <p>The Novara name, logo, app design, and all associated intellectual property are owned by Novara Ltd and protected by copyright and trademark laws. You may not copy, modify, or distribute any part of the Service without our prior written permission.</p>
+
+  <h2>6. Friends & Social Features</h2>
+  <p>When you use the Friends feature, your username, profile photo, and travel percentage become visible to friends you connect with. You can control your visibility settings at any time in the app. By connecting with another user, you consent to sharing this information with them.</p>
+
+  <h2>7. Subscriptions and Payments</h2>
+  <p>Novara offers a free tier and an optional Novara Pro subscription. By subscribing, you agree to:</p>
+  <ul>
+    <li>Pay the applicable fees as displayed at the time of purchase</li>
+    <li>Automatic renewal unless cancelled before the renewal date</li>
+    <li>Refund terms governed by Apple App Store or Google Play policies</li>
+  </ul>
+  <p>We reserve the right to change subscription pricing with 30 days' notice to existing subscribers.</p>
+
+  <h2>8. Disclaimers</h2>
+  <p>The Service is provided "as is" without warranties of any kind. We do not guarantee that the Service will be uninterrupted, error-free, or that country/region data will be 100% accurate. Novara is a personal travel tracking tool and should not be relied upon for navigation or official geographic information.</p>
+
+  <h2>9. Limitation of Liability</h2>
+  <p>To the maximum extent permitted by law, Novara Ltd shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Service. Our total liability to you shall not exceed the amount you paid to us in the 12 months preceding the claim.</p>
+
+  <h2>10. Termination</h2>
+  <p>You may delete your account at any time from the app settings. We reserve the right to suspend or terminate accounts that violate these Terms, with or without notice. Upon termination, your right to use the Service ceases immediately.</p>
+
+  <h2>11. Changes to Terms</h2>
+  <p>We may update these Terms from time to time. We will notify you of material changes via email or in-app notification. Continued use after changes take effect constitutes acceptance of the updated Terms.</p>
+
+  <h2>12. Governing Law</h2>
+  <p>These Terms are governed by the laws of England and Wales. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
+
+  <h2>13. Contact</h2>
+  <p>For questions about these Terms, please contact us at <a href="mailto:legal@novara.app">legal@novara.app</a> or visit our <a href="contact.html">Contact page</a>.</p>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <svg width="100" height="26" viewBox="0 0 122 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#ft-clip)">
+            <path d="M26.117 8.4707H36.4699L27.5287 23.5295H17.1758L26.117 8.4707Z" fill="white"/>
+            <path d="M16.7068 8.4707H24.2362L15.295 23.5295H7.76562L16.7068 8.4707Z" fill="white"/>
+            <path d="M9.17555 8.4707H14.8226L5.88143 23.5295H0.234375L9.17555 8.4707Z" fill="white"/>
+          </g>
+          <path d="M42.8241 21.952V10.048H45.5156V12.3894L45.2968 11.9737C45.574 11.2588 46.0262 10.7191 46.6535 10.3544C47.2954 9.97507 48.0394 9.78542 48.8855 9.78542C49.7608 9.78542 50.534 9.97507 51.205 10.3544C51.8907 10.7337 52.4232 11.2661 52.8024 11.9518C53.1817 12.6228 53.3714 13.4033 53.3714 14.2932V21.952H50.5048V14.9715C50.5048 14.4464 50.4027 13.9941 50.1985 13.6148C49.9942 13.2355 49.7097 12.9438 49.345 12.7395C48.9949 12.5207 48.5792 12.4113 48.0977 12.4113C47.6309 12.4113 47.2152 12.5207 46.8504 12.7395C46.4857 12.9438 46.2013 13.2355 45.997 13.6148C45.7928 13.9941 45.6907 14.4464 45.6907 14.9715V21.952H42.8241Z" fill="white"/>
+          <path d="M61.6161 22.2146C60.449 22.2146 59.3841 21.9447 58.4213 21.4049C57.473 20.8652 56.7144 20.1285 56.1455 19.1948C55.5911 18.2612 55.314 17.1962 55.314 16C55.314 14.8038 55.5911 13.7388 56.1455 12.8052C56.7144 11.8715 57.473 11.1348 58.4213 10.5951C59.3695 10.0553 60.4344 9.78542 61.6161 9.78542C62.7831 9.78542 63.8408 10.0553 64.789 10.5951C65.7373 11.1348 66.4886 11.8715 67.0429 12.8052C67.6118 13.7242 67.8963 14.7892 67.8963 16C67.8963 17.1962 67.6118 18.2612 67.0429 19.1948C66.474 20.1285 65.7154 20.8652 64.7671 21.4049C63.8189 21.9447 62.7686 22.2146 61.6161 22.2146ZM61.6161 19.5887C62.258 19.5887 62.8196 19.4355 63.301 19.1292C63.797 18.8228 64.1836 18.3998 64.4608 17.86C64.7526 17.3057 64.8984 16.6857 64.8984 16C64.8984 15.2998 64.7526 14.6871 64.4608 14.1619C64.1836 13.6221 63.797 13.1991 63.301 12.8927C62.8196 12.5718 62.258 12.4113 61.6161 12.4113C60.9596 12.4113 60.3834 12.5718 59.8874 12.8927C59.3914 13.1991 58.9975 13.6221 58.7057 14.1619C58.4286 14.6871 58.29 15.2998 58.29 16C58.29 16.6857 58.4286 17.3057 58.7057 17.86C58.9975 18.3998 59.3914 18.8228 59.8874 19.1292C60.3834 19.4355 60.9596 19.5887 61.6161 19.5887Z" fill="white"/>
+          <path d="M73.4452 21.952L68.7624 10.048H71.8916L75.2833 19.4137H74.1236L77.5372 10.048H80.6664L75.9836 21.952H73.4452Z" fill="white"/>
+          <path d="M85.434 22.2146C84.6025 22.2146 83.8803 22.076 83.2676 21.7988C82.6549 21.5217 82.1808 21.1278 81.8453 20.6172C81.5098 20.092 81.342 19.4866 81.342 18.8009C81.342 18.1445 81.4879 17.5609 81.7796 17.0504C82.0714 16.5252 82.5236 16.0875 83.1363 15.7374C83.7491 15.3873 84.5222 15.1393 85.4559 14.9934L89.3509 14.3588V16.5471L86.0029 17.116C85.434 17.2181 85.0109 17.4005 84.7338 17.6631C84.4566 17.9257 84.318 18.2685 84.318 18.6915C84.318 19.1 84.4712 19.4282 84.7775 19.6762C85.0985 19.9097 85.4923 20.0264 85.9592 20.0264C86.5573 20.0264 87.0825 19.9024 87.5347 19.6544C88.0015 19.3918 88.3589 19.0344 88.6069 18.5821C88.8695 18.1299 89.0008 17.6339 89.0008 17.0941V14.0306C89.0008 13.52 88.7966 13.0969 88.3881 12.7614C87.9942 12.4113 87.4691 12.2362 86.8126 12.2362C86.1999 12.2362 85.6528 12.404 85.1714 12.7395C84.7046 13.0605 84.3618 13.4908 84.1429 14.0306L81.8015 12.8927C82.0349 12.2654 82.3996 11.7257 82.8956 11.2734C83.4062 10.8066 84.0043 10.4419 84.69 10.1793C85.3756 9.91671 86.1196 9.78542 86.922 9.78542C87.8994 9.78542 88.7601 9.96777 89.5041 10.3325C90.2481 10.6826 90.8244 11.1786 91.2328 11.8205C91.6559 12.4478 91.8674 13.1845 91.8674 14.0306V21.952H89.154V19.9169L89.7667 19.8732C89.4603 20.3838 89.0956 20.8141 88.6726 21.1642C88.2495 21.4998 87.7681 21.7624 87.2284 21.952C86.6886 22.1271 86.0905 22.2146 85.434 22.2146Z" fill="white"/>
+          <path d="M94.5169 21.952V10.048H97.2084V12.6958L96.9896 12.3019C97.2668 11.412 97.6971 10.792 98.2806 10.4419C98.8788 10.0918 99.5936 9.91671 100.425 9.91671H101.125V12.4551H100.097C99.2799 12.4551 98.6235 12.7104 98.1275 13.2209C97.6315 13.7169 97.3835 14.4172 97.3835 15.3217V21.952H94.5169Z" fill="white"/>
+          <path d="M106.312 22.2146C105.48 22.2146 104.758 22.076 104.146 21.7988C103.533 21.5217 103.059 21.1278 102.723 20.6172C102.388 20.092 102.22 19.4866 102.22 18.8009C102.22 18.1445 102.366 17.5609 102.658 17.0504C102.949 16.5252 103.402 16.0875 104.014 15.7374C104.627 15.3873 105.4 15.1393 106.334 14.9934L110.229 14.3588V16.5471L106.881 17.116C106.312 17.2181 105.889 17.4005 105.612 17.6631C105.335 17.9257 105.196 18.2685 105.196 18.6915C105.196 19.1 105.349 19.4282 105.656 19.6762C105.976 19.9097 106.37 20.0264 106.837 20.0264C107.435 20.0264 107.96 19.9024 108.413 19.6544C108.88 19.3918 109.237 19.0344 109.485 18.5821C109.748 18.1299 109.879 17.6339 109.879 17.0941V14.0306C109.879 13.52 109.675 13.0969 109.266 12.7614C108.872 12.4113 108.347 12.2362 107.691 12.2362C107.078 12.2362 106.531 12.404 106.049 12.7395C105.583 13.0605 105.24 13.4908 105.021 14.0306L102.68 12.8927C102.913 12.2654 103.278 11.7257 103.774 11.2734C104.284 10.8066 104.882 10.4419 105.568 10.1793C106.254 9.91671 106.998 9.78542 107.8 9.78542C108.777 9.78542 109.638 9.96777 110.382 10.3325C111.126 10.6826 111.702 11.1786 112.111 11.8205C112.534 12.4478 112.745 13.1845 112.745 14.0306V21.952H110.032V19.9169L110.645 19.8732C110.338 20.3838 109.974 20.8141 109.551 21.1642C109.128 21.4998 108.646 21.7624 108.106 21.952C107.567 22.1271 106.968 22.2146 106.312 22.2146Z" fill="white"/>
+          <defs><clipPath id="ft-clip"><rect width="36.7059" height="15.0588" fill="white" transform="translate(0 8.4707)"/></clipPath></defs>
+        </svg>
+        <p>Colour in your world. Track every country, city, and region you've ever visited.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn" aria-label="Instagram">
+            <svg viewBox="0 0 256 256" fill="currentColor"><path d="M176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24ZM128,176a48,48,0,1,1,48-48A48.05,48.05,0,0,1,128,176Zm60-96a12,12,0,1,1,12-12A12,12,0,0,1,188,80Zm-28,48a32,32,0,1,1-32-32A32,32,0,0,1,160,128Z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.87a8.18 8.18 0 004.78 1.52V6.94a4.84 4.84 0 01-1.01-.25z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Bluesky">
+            <svg viewBox="0 0 600 530" fill="currentColor"><path d="m135.72 44.03c66.496 49.921 138.02 151.14 164.28 205.46 26.262-54.316 97.782-155.54 164.28-205.46 47.98-36.021 125.72-63.892 125.72 24.795 0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.3797-3.6904-10.832-3.7077-7.8964-0.0173-2.9357-1.1937 0.51669-3.7077 7.8964-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.4491-163.25-81.433-5.9562-21.282-16.111-152.36-16.111-170.07 0-88.687 77.742-60.816 125.72-24.795z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Medium">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-links-group">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="index.html#features">Features</a></li>
+            <li><a href="index.html#how-it-works">How it works</a></li>
+            <li><a href="index.html#passport">Passport</a></li>
+            <li><a href="badges.html">Badges</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-download">
+      <a href="index.html#download" class="footer-store-btn" aria-label="Download on the App Store">
+        <img src="App Store link.svg" alt="Download on the App Store" width="125" height="42" />
+      </a>
+      <a href="index.html#download" class="footer-store-btn" aria-label="Get it on Google Play">
+        <img src="Google Play link.svg" alt="Get it on Google Play" width="137" height="42" />
+      </a>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Novara. All rights reserved.</p>
+      <ul class="footer-bottom-links">
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    localStorage.setItem('theme', html.getAttribute('data-theme'));
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  else if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+    document.documentElement.setAttribute('data-theme', 'dark');
+
+  // Close mobile menu on nav link click
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelector('.nav-links').classList.remove('open');
+      const overlay = document.querySelector('.nav-mobile-overlay');
+      if (overlay) overlay.classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>

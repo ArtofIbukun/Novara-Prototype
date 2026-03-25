@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Badges &amp; Rewards — Novara</title>
+  <meta name="description" content="Hit a milestone, unlock a badge — and earn exclusive in-app rewards along the way." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #F56630; --orange-mid: #F89874; --orange-pale: #FEF0EA;
+      --purple: #20134B; --purple-mid: #4D426F;
+      --white: #FFFFFF; --grey-50: #F9FAFB; --grey-100: #F0F2F5;
+      --grey-200: #E4E7EC; --grey-400: #98A2B3; --grey-600: #475367;
+      --text: #20134B; --nav-bg: rgba(255,255,255,0.92);
+      --card-border: #E4E7EC;
+      --radius-sm: 8px; --radius-md: 16px; --radius-lg: 24px;
+      --shadow-sm: 0 1px 3px rgba(32,19,75,.08), 0 1px 2px rgba(32,19,75,.04);
+      --shadow-md: 0 4px 16px rgba(32,19,75,.10), 0 2px 6px rgba(32,19,75,.06);
+    }
+    [data-theme="dark"] {
+      --white: #0D0820; --grey-50: #120A29; --grey-100: #170D35;
+      --grey-200: #1D1144; --grey-400: #9892AC; --grey-600: #BAB6C7;
+      --text: #E9E7ED; --nav-bg: rgba(13,8,32,0.92); --orange-pale: #2E1A12;
+      --card-border: #1D1144;
+    }
+    html { scroll-behavior: smooth; }
+    h1,h2,h3,h4,h5,h6 { font-family: 'Bricolage Grotesque', sans-serif; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); line-height: 1.45; -webkit-font-smoothing: antialiased; transition: background .3s, color .3s; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--grey-200); }
+    .nav-inner { max-width: 1160px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--grey-600);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform .2s, opacity .2s;
+    }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; border: none; cursor: pointer; text-decoration: none; transition: transform .15s, background .15s; }
+    .btn-primary { background: #E8551E; color: white; padding: 10px 22px; border-radius: 100px; box-shadow: 0 2px 8px rgba(245,102,48,.35); text-shadow: 0 1px 2px rgba(0,0,0,.12); }
+    .btn-primary:hover { background: #D14A16; }
+    .nav-btn-short { display: none; }
+    .nav-theme-item { display: none; }
+    .nav-theme-btn {
+      display: flex; align-items: center; gap: 12px;
+      background: none; border: none; cursor: pointer;
+      padding: 16px 0; font-size: 16px; font-weight: 600;
+      color: var(--text); width: 100%; text-align: left;
+    }
+    .nav-theme-btn i { font-size: 18px; }
+    .nav-theme-lbl-dark { display: inline; }
+    .nav-theme-lbl-light { display: none; }
+    [data-theme="dark"] .nav-theme-lbl-dark { display: none !important; }
+    [data-theme="dark"] .nav-theme-lbl-light { display: inline !important; }
+    .theme-toggle {
+      background: none; border: 1px solid var(--grey-200);
+      border-radius: 50%; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text); flex-shrink: 0;
+      transition: background .2s, border-color .2s;
+    }
+    .theme-toggle:hover { background: var(--grey-100); border-color: var(--grey-400); }
+    .theme-toggle .icon-moon { display: block; }
+    .theme-toggle .icon-sun  { display: none; }
+    [data-theme="dark"] .theme-toggle .icon-moon { display: none !important; }
+    [data-theme="dark"] .theme-toggle .icon-sun  { display: block !important; }
+    .nav-mobile-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(32,19,75,.5); z-index: 99;
+    }
+    .nav-mobile-overlay.open { display: block; }
+    [data-theme="dark"] .nav-links.open { background: var(--grey-50); }
+    [data-theme="dark"] .nav-links li { border-bottom-color: var(--grey-200); }
+    [data-theme="dark"] .nav-links a { color: var(--text); }
+    [data-theme="dark"] .nav-mobile-overlay { background: rgba(0,0,0,.6); }
+    [data-theme="dark"] .nav-logo svg path[fill="#20134B"] { fill: #E9E7ED; }
+    @media (max-width: 860px) {
+      .nav-btn-full { display: none; }
+      .nav-btn-short { display: inline; }
+      .theme-toggle { display: none; }
+      .nav-links {
+        display: none; position: fixed; top: 64px;
+        left: 0; right: 0; background: var(--white);
+        flex-direction: column; padding: 24px; gap: 0;
+        box-shadow: 0 16px 48px rgba(32,19,75,.14); z-index: 100;
+        border-bottom: 1px solid var(--grey-200);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links li { border-bottom: 1px solid var(--grey-100); }
+      .nav-links a { display: block; padding: 16px 0; font-size: 16px; font-weight: 600; color: var(--text); }
+      .nav-hamburger { display: flex; }
+      .nav-theme-item { display: block !important; }
+      .footer-links-group { gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .footer-links-group { flex-direction: column; gap: 20px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+
+    .page-hero { position: relative; overflow: hidden; padding: 80px 24px 64px; text-align: center; background: var(--purple); }
+    .page-hero-bg { position: absolute; inset: 0; z-index: 0; }
+    .page-hero-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+    .page-hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(32,19,75,.75) 0%, rgba(32,19,75,.55) 50%, rgba(32,19,75,.7) 100%); }
+    .page-hero > *:not(.page-hero-bg) { position: relative; z-index: 1; }
+    .page-hero .breadcrumb { font-size: 13px; color: rgba(255,255,255,.55); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .page-hero .breadcrumb a { color: rgba(255,255,255,.55); text-decoration: none; }
+    .page-hero .breadcrumb a:hover { color: rgba(255,255,255,.8); }
+    .page-hero h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 700; line-height: 1; letter-spacing: -.04em; color: white; margin-bottom: 16px; }
+    .page-hero p { font-size: 16px; color: rgba(255,255,255,.65); max-width: 480px; margin: 0 auto; }
+    .btn-glass {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 32px; border-radius: 100px; color: white;
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px;
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.18), 0 2px 12px rgba(0,0,0,0.1);
+      transition: transform .15s, background .15s, box-shadow .2s, border-color .2s;
+      text-decoration: none; cursor: pointer; margin-top: 24px;
+    }
+    .btn-glass:hover {
+      background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .btn-glass:active { transform: scale(.97); }
+    [data-theme="dark"] .btn-glass { background: rgba(51,51,51,0.25); border-color: rgba(255,255,255,0.12); }
+    [data-theme="dark"] .btn-glass:hover { background: rgba(51,51,51,0.35); border-color: rgba(255,255,255,0.2); }
+
+    /* Topographic background pattern */
+    .badges-page-wrap {
+      position: relative;
+    }
+    .badges-page-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('Topographic 3.svg');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .badges-page-wrap > * {
+      position: relative;
+      z-index: 1;
+    }
+    [data-theme="dark"] .badges-page-wrap::before {
+      opacity: 0.03;
+      filter: brightness(0) invert(1);
+    }
+
+    /* Footer */
+    footer { background: var(--purple); border-top: 1px solid rgba(255,255,255,.08); padding: 60px 24px 40px; }
+    .footer-inner { max-width: 1160px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 48px; margin-bottom: 48px; flex-wrap: wrap; }
+    .footer-brand p { font-size: 14px; color: rgba(255,255,255,.55); margin-top: 16px; max-width: 260px; line-height: 1.45; }
+    .footer-links-group { display: flex; gap: 64px; flex-wrap: wrap; }
+    .footer-col h4 { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { font-size: 14px; color: rgba(255,255,255,.65); text-decoration: none; transition: color .2s; }
+    .footer-col a:hover { color: white; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top: 32px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .footer-bottom p { font-size: 12px; color: rgba(255,255,255,.45); }
+    .footer-bottom-links { display: flex; gap: 24px; list-style: none; }
+    .footer-bottom-links a { font-size: 12px; color: rgba(255,255,255,.45); text-decoration: none; transition: color .2s; }
+    .footer-bottom-links a:hover { color: rgba(255,255,255,.7); }
+    .footer-social { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .social-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .15s; color: rgba(255,255,255,.7);
+      text-decoration: none; flex-shrink: 0;
+    }
+    .social-btn:hover { background: rgba(255,255,255,.18); transform: translateY(-2px); color: white; }
+    .social-btn svg { width: 16px; height: 16px; display: block; }
+    .footer-download {
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+      padding: 28px 0; border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .footer-store-btn { display: inline-block; transition: opacity .2s, transform .15s; line-height: 0; }
+    .footer-store-btn:hover { opacity: .85; transform: translateY(-2px); }
+
+    /* Badges page specific */
+    .badges-page-section { padding: 0 max(24px, calc((100% - 1160px) / 2 + 24px)) 80px; }
+    .badges-filter-bar {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin: 0 auto 40px; padding: 0 max(24px, calc((100% - 1160px) / 2 + 24px));
+    }
+    .filter-btn {
+      padding: 8px 18px; border-radius: 100px;
+      border: 1.5px solid var(--grey-200);
+      background: var(--white); color: var(--grey-600);
+      font-size: 14px; font-weight: 500; cursor: pointer;
+      transition: all .2s; display: inline-flex; align-items: center; gap: 6px;
+      font-family: inherit;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--orange); color: white; border-color: var(--orange);
+    }
+    .filter-count {
+      background: rgba(255,255,255,.25); border-radius: 100px;
+      padding: 1px 7px; font-size: 12px; font-weight: 600;
+    }
+    .filter-btn:not(.active) .filter-count { background: var(--grey-100); color: var(--grey-600); }
+    .badges-page-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+    }
+    .badge-page-card {
+      display: flex; gap: 20px; align-items: flex-start;
+      background: var(--white); border: 1px solid var(--grey-200);
+      border-radius: var(--radius-lg); padding: 24px;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .badge-page-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(32,19,75,.09); }
+    .badge-page-frame {
+      width: 72px; height: 72px; flex-shrink: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(245,102,48,.12) 0%, rgba(245,102,48,.04) 100%);
+      border: 2px solid rgba(245,102,48,.2);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), background .2s, box-shadow .35s;
+    }
+    .badge-page-card:hover .badge-page-frame {
+      transform: scale(1.08);
+      background: linear-gradient(135deg, rgba(245,102,48,.22) 0%, rgba(245,102,48,.1) 100%);
+      box-shadow: 0 0 0 6px rgba(245,102,48,.1), 0 0 24px rgba(245,102,48,.15);
+    }
+    .badge-page-frame img {
+      width: 44px; height: 44px;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .badge-page-card:hover .badge-page-frame img { transform: scale(1.12) rotate(-6deg); }
+    .badge-page-info { flex: 1; min-width: 0; }
+    .badge-page-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+    .badge-page-header h3 { font-size: 16px; font-weight: 700; color: var(--purple); margin: 0; }
+    .badge-category-tag {
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+      background: var(--orange-pale); color: var(--orange); border-radius: 100px; padding: 3px 10px;
+    }
+    .badge-page-desc { font-size: 13px; color: var(--grey-600); margin: 0 0 12px; line-height: 1.5; font-style: italic; }
+    .badge-how-to-earn, .badge-reward {
+      display: flex; gap: 8px; align-items: baseline; font-size: 13px; margin-bottom: 6px;
+    }
+    .badge-earn-label, .badge-reward-label {
+      font-weight: 600; color: var(--purple); white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
+    }
+    .badge-earn-value, .badge-reward-value { color: var(--grey-600); }
+    [data-theme="dark"] .badge-page-card { background: var(--grey-100); border-color: var(--card-border); }
+    [data-theme="dark"] .badge-page-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,.3); }
+    [data-theme="dark"] .badge-page-header h3 { color: var(--text); }
+    [data-theme="dark"] .badge-page-desc { color: var(--grey-600); }
+    [data-theme="dark"] .badge-page-frame img { filter: brightness(0) invert(1); }
+    [data-theme="dark"] .badge-page-frame { border-color: rgba(245,102,48,.35); }
+    [data-theme="dark"] .filter-btn { background: var(--grey-100); border-color: var(--card-border); color: var(--text); }
+    [data-theme="dark"] .filter-btn.active, [data-theme="dark"] .filter-btn:hover { background: var(--orange); color: white; border-color: var(--orange); }
+    [data-theme="dark"] .filter-btn:not(.active) .filter-count { background: rgba(255,255,255,.1); color: var(--grey-600); }
+    [data-theme="dark"] .badge-earn-label, [data-theme="dark"] .badge-reward-label { color: var(--text); }
+    [data-theme="dark"] .badge-earn-value, [data-theme="dark"] .badge-reward-value { color: var(--grey-600); }
+    [data-theme="dark"] .badge-category-tag { background: rgba(245,102,48,.15); }
+    @media (max-width: 768px) {
+      .badges-page-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Padding above filter bar */
+    .badges-page-wrap { padding-top: 48px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="Novara home">
+      <svg width="122" height="32" viewBox="0 0 122 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#nl-clip)">
+          <path d="M26.117 8.4707H36.4699L27.5287 23.5295H17.1758L26.117 8.4707Z" fill="#F56630"/>
+          <path d="M16.7068 8.4707H24.2362L15.295 23.5295H7.76562L16.7068 8.4707Z" fill="#FA9874"/>
+          <path d="M9.17555 8.4707H14.8226L5.88143 23.5295H0.234375L9.17555 8.4707Z" fill="#FCB59A"/>
+        </g>
+        <path d="M42.8241 21.952V10.048H45.5156V12.3894L45.2968 11.9737C45.574 11.2588 46.0262 10.7191 46.6535 10.3544C47.2954 9.97507 48.0394 9.78542 48.8855 9.78542C49.7608 9.78542 50.534 9.97507 51.205 10.3544C51.8907 10.7337 52.4232 11.2661 52.8024 11.9518C53.1817 12.6228 53.3714 13.4033 53.3714 14.2932V21.952H50.5048V14.9715C50.5048 14.4464 50.4027 13.9941 50.1985 13.6148C49.9942 13.2355 49.7097 12.9438 49.345 12.7395C48.9949 12.5207 48.5792 12.4113 48.0977 12.4113C47.6309 12.4113 47.2152 12.5207 46.8504 12.7395C46.4857 12.9438 46.2013 13.2355 45.997 13.6148C45.7928 13.9941 45.6907 14.4464 45.6907 14.9715V21.952H42.8241Z" fill="#20134B"/>
+        <path d="M61.6161 22.2146C60.449 22.2146 59.3841 21.9447 58.4213 21.4049C57.473 20.8652 56.7144 20.1285 56.1455 19.1948C55.5911 18.2612 55.314 17.1962 55.314 16C55.314 14.8038 55.5911 13.7388 56.1455 12.8052C56.7144 11.8715 57.473 11.1348 58.4213 10.5951C59.3695 10.0553 60.4344 9.78542 61.6161 9.78542C62.7831 9.78542 63.8408 10.0553 64.789 10.5951C65.7373 11.1348 66.4886 11.8715 67.0429 12.8052C67.6118 13.7242 67.8963 14.7892 67.8963 16C67.8963 17.1962 67.6118 18.2612 67.0429 19.1948C66.474 20.1285 65.7154 20.8652 64.7671 21.4049C63.8189 21.9447 62.7686 22.2146 61.6161 22.2146ZM61.6161 19.5887C62.258 19.5887 62.8196 19.4355 63.301 19.1292C63.797 18.8228 64.1836 18.3998 64.4608 17.86C64.7526 17.3057 64.8984 16.6857 64.8984 16C64.8984 15.2998 64.7526 14.6871 64.4608 14.1619C64.1836 13.6221 63.797 13.1991 63.301 12.8927C62.8196 12.5718 62.258 12.4113 61.6161 12.4113C60.9596 12.4113 60.3834 12.5718 59.8874 12.8927C59.3914 13.1991 58.9975 13.6221 58.7057 14.1619C58.4286 14.6871 58.29 15.2998 58.29 16C58.29 16.6857 58.4286 17.3057 58.7057 17.86C58.9975 18.3998 59.3914 18.8228 59.8874 19.1292C60.3834 19.4355 60.9596 19.5887 61.6161 19.5887Z" fill="#20134B"/>
+        <path d="M73.4452 21.952L68.7624 10.048H71.8916L75.2833 19.4137H74.1236L77.5372 10.048H80.6664L75.9836 21.952H73.4452Z" fill="#20134B"/>
+        <path d="M85.434 22.2146C84.6025 22.2146 83.8803 22.076 83.2676 21.7988C82.6549 21.5217 82.1808 21.1278 81.8453 20.6172C81.5098 20.092 81.342 19.4866 81.342 18.8009C81.342 18.1445 81.4879 17.5609 81.7796 17.0504C82.0714 16.5252 82.5236 16.0875 83.1363 15.7374C83.7491 15.3873 84.5222 15.1393 85.4559 14.9934L89.3509 14.3588V16.5471L86.0029 17.116C85.434 17.2181 85.0109 17.4005 84.7338 17.6631C84.4566 17.9257 84.318 18.2685 84.318 18.6915C84.318 19.1 84.4712 19.4282 84.7775 19.6762C85.0985 19.9097 85.4923 20.0264 85.9592 20.0264C86.5573 20.0264 87.0825 19.9024 87.5347 19.6544C88.0015 19.3918 88.3589 19.0344 88.6069 18.5821C88.8695 18.1299 89.0008 17.6339 89.0008 17.0941V14.0306C89.0008 13.52 88.7966 13.0969 88.3881 12.7614C87.9942 12.4113 87.4691 12.2362 86.8126 12.2362C86.1999 12.2362 85.6528 12.404 85.1714 12.7395C84.7046 13.0605 84.3618 13.4908 84.1429 14.0306L81.8015 12.8927C82.0349 12.2654 82.3996 11.7257 82.8956 11.2734C83.4062 10.8066 84.0043 10.4419 84.69 10.1793C85.3756 9.91671 86.1196 9.78542 86.922 9.78542C87.8994 9.78542 88.7601 9.96777 89.5041 10.3325C90.2481 10.6826 90.8244 11.1786 91.2328 11.8205C91.6559 12.4478 91.8674 13.1845 91.8674 14.0306V21.952H89.154V19.9169L89.7667 19.8732C89.4603 20.3838 89.0956 20.8141 88.6726 21.1642C88.2495 21.4998 87.7681 21.7624 87.2284 21.952C86.6886 22.1271 86.0905 22.2146 85.434 22.2146Z" fill="#20134B"/>
+        <path d="M94.5169 21.952V10.048H97.2084V12.6958L96.9896 12.3019C97.2668 11.412 97.6971 10.792 98.2806 10.4419C98.8788 10.0918 99.5936 9.91671 100.425 9.91671H101.125V12.4551H100.097C99.2799 12.4551 98.6235 12.7104 98.1275 13.2209C97.6315 13.7169 97.3835 14.4172 97.3835 15.3217V21.952H94.5169Z" fill="#20134B"/>
+        <path d="M106.312 22.2146C105.48 22.2146 104.758 22.076 104.146 21.7988C103.533 21.5217 103.059 21.1278 102.723 20.6172C102.388 20.092 102.22 19.4866 102.22 18.8009C102.22 18.1445 102.366 17.5609 102.658 17.0504C102.949 16.5252 103.402 16.0875 104.014 15.7374C104.627 15.3873 105.4 15.1393 106.334 14.9934L110.229 14.3588V16.5471L106.881 17.116C106.312 17.2181 105.889 17.4005 105.612 17.6631C105.335 17.9257 105.196 18.2685 105.196 18.6915C105.196 19.1 105.349 19.4282 105.656 19.6762C105.976 19.9097 106.37 20.0264 106.837 20.0264C107.435 20.0264 107.96 19.9024 108.413 19.6544C108.88 19.3918 109.237 19.0344 109.485 18.5821C109.748 18.1299 109.879 17.6339 109.879 17.0941V14.0306C109.879 13.52 109.675 13.0969 109.266 12.7614C108.872 12.4113 108.347 12.2362 107.691 12.2362C107.078 12.2362 106.531 12.404 106.049 12.7395C105.583 13.0605 105.24 13.4908 105.021 14.0306L102.68 12.8927C102.913 12.2654 103.278 11.7257 103.774 11.2734C104.284 10.8066 104.882 10.4419 105.568 10.1793C106.254 9.91671 106.998 9.78542 107.8 9.78542C108.777 9.78542 109.638 9.96777 110.382 10.3325C111.126 10.6826 111.702 11.1786 112.111 11.8205C112.534 12.4478 112.745 13.1845 112.745 14.0306V21.952H110.032V19.9169L110.645 19.8732C110.338 20.3838 109.974 20.8141 109.551 21.1642C109.128 21.4998 108.646 21.7624 108.106 21.952C107.567 22.1271 106.968 22.2146 106.312 22.2146Z" fill="#20134B"/>
+        <defs>
+          <clipPath id="nl-clip">
+            <rect width="36.7059" height="15.0588" fill="white" transform="translate(0 8.4707)"/>
+          </clipPath>
+        </defs>
+      </svg>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#features">Features</a></li>
+      <li><a href="index.html#how-it-works">How it works</a></li>
+      <li><a href="index.html#passport">Passport</a></li>
+      <li><a href="index.html#friends">Compare</a></li>
+      <li><a href="badges.html">Badges</a></li>
+      <li class="nav-theme-item">
+        <button class="nav-theme-btn" aria-label="Toggle dark mode" onclick="toggleTheme()">
+          <i class="ph-fill ph-moon icon-moon"></i>
+          <i class="ph-fill ph-sun icon-sun"></i>
+          <span class="nav-theme-lbl-dark">Switch to dark mode</span>
+          <span class="nav-theme-lbl-light">Switch to light mode</span>
+        </button>
+      </li>
+    </ul>
+    <a href="index.html#download" class="btn btn-primary"><span class="nav-btn-full">Download Free</span><span class="nav-btn-short">Download</span></a>
+    <button class="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()">
+      <i class="ph-fill ph-moon icon-moon"></i>
+      <i class="ph-fill ph-sun icon-sun"></i>
+    </button>
+    <button class="nav-hamburger" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('open');document.querySelector('.nav-mobile-overlay').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-mobile-overlay" onclick="document.querySelector('.nav-links').classList.remove('open');this.classList.remove('open')"></div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-bg">
+    <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=2400&q=90" alt="Paris Eiffel Tower at golden hour" loading="eager" />
+  </div>
+  <div class="breadcrumb">
+    <a href="index.html">Home</a>
+    <i class="ph ph-caret-right"></i>
+    <span>Badges &amp; Rewards</span>
+  </div>
+  <h1>Badges &amp; Rewards</h1>
+  <p>Hit a milestone, unlock a badge — and earn exclusive in-app rewards along the way.</p>
+</div>
+
+<div class="badges-page-wrap">
+  <div class="badges-filter-bar">
+    <button class="filter-btn active" data-filter="all">All <span class="filter-count">20</span></button>
+    <button class="filter-btn" data-filter="milestones">Milestones</button>
+    <button class="filter-btn" data-filter="exploration">Exploration</button>
+    <button class="filter-btn" data-filter="adventure">Adventure</button>
+  </div>
+
+  <div class="badges-page-section">
+    <div class="badges-page-grid" id="badgesGrid">
+
+      <div class="badge-page-card" data-category="milestones">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/hot-air-baloon.svg" alt="Up &amp; Away" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Up &amp; Away</h3>
+            <span class="badge-category-tag">Milestone</span>
+          </div>
+          <p class="badge-page-desc">Every journey starts with a single step — or a single boarding pass.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Log your very first trip in Novara</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Welcome stats card unlocked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="milestones">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/camera.svg" alt="Shutterbug" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Shutterbug</h3>
+            <span class="badge-category-tag">Milestone</span>
+          </div>
+          <p class="badge-page-desc">You don't just travel — you document. Every trip, every memory.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Log 10 trips</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Exclusive photo-border passport style</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="milestones">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/luggage.svg" alt="Frequent Flyer" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Frequent Flyer</h3>
+            <span class="badge-category-tag">Milestone</span>
+          </div>
+          <p class="badge-page-desc">You've been around. A lot.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Log 25 trips</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">"Elite Traveller" profile badge</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="milestones">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/kite.svg" alt="Free Spirit" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Free Spirit</h3>
+            <span class="badge-category-tag">Milestone</span>
+          </div>
+          <p class="badge-page-desc">One calendar year, five countries. You don't sit still.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit 5 countries in a single year</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Yearly recap card unlocked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="milestones">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/moon-crescent.svg" alt="Night Owl" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Night Owl</h3>
+            <span class="badge-category-tag">Milestone</span>
+          </div>
+          <p class="badge-page-desc">The best adventures don't end at sunset.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Log 5 overnight trips</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Dark passport theme unlocked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="exploration">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/earth.svg" alt="World Citizen" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>World Citizen</h3>
+            <span class="badge-category-tag">Exploration</span>
+          </div>
+          <p class="badge-page-desc">The world is your home. You've proven it.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit 50+ countries</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Golden passport stamp &amp; map border</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="exploration">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/map.svg" alt="Cartographer" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Cartographer</h3>
+            <span class="badge-category-tag">Exploration</span>
+          </div>
+          <p class="badge-page-desc">A quarter of the world, filled in your colours.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Fill 25% of the world map</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Custom map colour palette</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="exploration">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/rainbow-clouds.svg" alt="Rainbow Collector" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Rainbow Collector</h3>
+            <span class="badge-category-tag">Exploration</span>
+          </div>
+          <p class="badge-page-desc">Five continents. Five chapters of one incredible story.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit countries on 5 continents</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Multi-colour passport cover</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="exploration">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/eiffel-tower.svg" alt="Landmark Hunter" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Landmark Hunter</h3>
+            <span class="badge-category-tag">Exploration</span>
+          </div>
+          <p class="badge-page-desc">You seek the iconic, the historic, the unforgettable.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit 3 UNESCO World Heritage countries</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Heritage map pin set</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="exploration">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/boat-sailing.svg" alt="Island Hopper" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Island Hopper</h3>
+            <span class="badge-category-tag">Exploration</span>
+          </div>
+          <p class="badge-page-desc">Land is overrated. You prefer the islands.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit 5 island nations</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">"Oceanic" map colour palette</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="adventure">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/beach-chair.svg" alt="Sun Seeker" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Sun Seeker</h3>
+            <span class="badge-category-tag">Adventure</span>
+          </div>
+          <p class="badge-page-desc">Sand between your toes in five different countries.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit 5 beach destinations</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Coastal map theme unlocked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="adventure">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/bicycle.svg" alt="Two-Wheeled Explorer" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Two-Wheeled Explorer</h3>
+            <span class="badge-category-tag">Adventure</span>
+          </div>
+          <p class="badge-page-desc">The best way to see a city? On two wheels.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Log trips using cycling in 3+ cities</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Bike route display feature</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="adventure">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/cruise.svg" alt="High Seas" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>High Seas</h3>
+            <span class="badge-category-tag">Adventure</span>
+          </div>
+          <p class="badge-page-desc">Port after port. The journey is the destination.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit 10+ port cities</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">"Maritime" passport cover</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="adventure">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/mountain-road.svg" alt="Summit Seeker" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Summit Seeker</h3>
+            <span class="badge-category-tag">Adventure</span>
+          </div>
+          <p class="badge-page-desc">You go where the roads end and the mountains begin.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit 3 mountainous countries</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">"Alpine" map theme</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="adventure">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/van.svg" alt="Road Warrior" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Road Warrior</h3>
+            <span class="badge-category-tag">Adventure</span>
+          </div>
+          <p class="badge-page-desc">Borders are just signs on the side of the road.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Road trip through 3+ countries</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Road trip route display feature</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="adventure">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/tree-sunset.svg" alt="Nature Nomad" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Nature Nomad</h3>
+            <span class="badge-category-tag">Adventure</span>
+          </div>
+          <p class="badge-page-desc">Concrete jungles are fine. Real jungles are better.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit 5 countries with national parks</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">"Wilderness" map style</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="adventure">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/snowflakes.svg" alt="Frost Explorer" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Frost Explorer</h3>
+            <span class="badge-category-tag">Adventure</span>
+          </div>
+          <p class="badge-page-desc">You don't avoid the cold — you chase it.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit a country known for snow</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">"Arctic" map theme</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="adventure">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/flowers.svg" alt="Bloom Chaser" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Bloom Chaser</h3>
+            <span class="badge-category-tag">Adventure</span>
+          </div>
+          <p class="badge-page-desc">Spring is different in every country. You'd know.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit a country during its spring season</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Floral passport theme unlocked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="adventure">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/sunset.svg" alt="Golden Hour" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Golden Hour</h3>
+            <span class="badge-category-tag">Adventure</span>
+          </div>
+          <p class="badge-page-desc">Three continents, three golden sunsets.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit countries on 3 different continents</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Sunset gradient map theme</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="badge-page-card" data-category="adventure">
+        <div class="badge-page-frame">
+          <img src="Achievement Badges/rain-wind.svg" alt="Storm Chaser" />
+        </div>
+        <div class="badge-page-info">
+          <div class="badge-page-header">
+            <h3>Storm Chaser</h3>
+            <span class="badge-category-tag">Adventure</span>
+          </div>
+          <p class="badge-page-desc">Most people check the forecast. You ignore it.</p>
+          <div class="badge-how-to-earn">
+            <span class="badge-earn-label"><i class="ph-fill ph-target"></i> How to earn</span>
+            <span class="badge-earn-value">Visit 3 countries outside your home climate</span>
+          </div>
+          <div class="badge-reward">
+            <span class="badge-reward-label"><i class="ph-fill ph-gift"></i> Reward</span>
+            <span class="badge-reward-value">Weather overlay feature unlocked</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <svg width="100" height="26" viewBox="0 0 122 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#ft-clip)">
+            <path d="M26.117 8.4707H36.4699L27.5287 23.5295H17.1758L26.117 8.4707Z" fill="white"/>
+            <path d="M16.7068 8.4707H24.2362L15.295 23.5295H7.76562L16.7068 8.4707Z" fill="white"/>
+            <path d="M9.17555 8.4707H14.8226L5.88143 23.5295H0.234375L9.17555 8.4707Z" fill="white"/>
+          </g>
+          <path d="M42.8241 21.952V10.048H45.5156V12.3894L45.2968 11.9737C45.574 11.2588 46.0262 10.7191 46.6535 10.3544C47.2954 9.97507 48.0394 9.78542 48.8855 9.78542C49.7608 9.78542 50.534 9.97507 51.205 10.3544C51.8907 10.7337 52.4232 11.2661 52.8024 11.9518C53.1817 12.6228 53.3714 13.4033 53.3714 14.2932V21.952H50.5048V14.9715C50.5048 14.4464 50.4027 13.9941 50.1985 13.6148C49.9942 13.2355 49.7097 12.9438 49.345 12.7395C48.9949 12.5207 48.5792 12.4113 48.0977 12.4113C47.6309 12.4113 47.2152 12.5207 46.8504 12.7395C46.4857 12.9438 46.2013 13.2355 45.997 13.6148C45.7928 13.9941 45.6907 14.4464 45.6907 14.9715V21.952H42.8241Z" fill="white"/>
+          <path d="M61.6161 22.2146C60.449 22.2146 59.3841 21.9447 58.4213 21.4049C57.473 20.8652 56.7144 20.1285 56.1455 19.1948C55.5911 18.2612 55.314 17.1962 55.314 16C55.314 14.8038 55.5911 13.7388 56.1455 12.8052C56.7144 11.8715 57.473 11.1348 58.4213 10.5951C59.3695 10.0553 60.4344 9.78542 61.6161 9.78542C62.7831 9.78542 63.8408 10.0553 64.789 10.5951C65.7373 11.1348 66.4886 11.8715 67.0429 12.8052C67.6118 13.7242 67.8963 14.7892 67.8963 16C67.8963 17.1962 67.6118 18.2612 67.0429 19.1948C66.474 20.1285 65.7154 20.8652 64.7671 21.4049C63.8189 21.9447 62.7686 22.2146 61.6161 22.2146ZM61.6161 19.5887C62.258 19.5887 62.8196 19.4355 63.301 19.1292C63.797 18.8228 64.1836 18.3998 64.4608 17.86C64.7526 17.3057 64.8984 16.6857 64.8984 16C64.8984 15.2998 64.7526 14.6871 64.4608 14.1619C64.1836 13.6221 63.797 13.1991 63.301 12.8927C62.8196 12.5718 62.258 12.4113 61.6161 12.4113C60.9596 12.4113 60.3834 12.5718 59.8874 12.8927C59.3914 13.1991 58.9975 13.6221 58.7057 14.1619C58.4286 14.6871 58.29 15.2998 58.29 16C58.29 16.6857 58.4286 17.3057 58.7057 17.86C58.9975 18.3998 59.3914 18.8228 59.8874 19.1292C60.3834 19.4355 60.9596 19.5887 61.6161 19.5887Z" fill="white"/>
+          <path d="M73.4452 21.952L68.7624 10.048H71.8916L75.2833 19.4137H74.1236L77.5372 10.048H80.6664L75.9836 21.952H73.4452Z" fill="white"/>
+          <path d="M85.434 22.2146C84.6025 22.2146 83.8803 22.076 83.2676 21.7988C82.6549 21.5217 82.1808 21.1278 81.8453 20.6172C81.5098 20.092 81.342 19.4866 81.342 18.8009C81.342 18.1445 81.4879 17.5609 81.7796 17.0504C82.0714 16.5252 82.5236 16.0875 83.1363 15.7374C83.7491 15.3873 84.5222 15.1393 85.4559 14.9934L89.3509 14.3588V16.5471L86.0029 17.116C85.434 17.2181 85.0109 17.4005 84.7338 17.6631C84.4566 17.9257 84.318 18.2685 84.318 18.6915C84.318 19.1 84.4712 19.4282 84.7775 19.6762C85.0985 19.9097 85.4923 20.0264 85.9592 20.0264C86.5573 20.0264 87.0825 19.9024 87.5347 19.6544C88.0015 19.3918 88.3589 19.0344 88.6069 18.5821C88.8695 18.1299 89.0008 17.6339 89.0008 17.0941V14.0306C89.0008 13.52 88.7966 13.0969 88.3881 12.7614C87.9942 12.4113 87.4691 12.2362 86.8126 12.2362C86.1999 12.2362 85.6528 12.404 85.1714 12.7395C84.7046 13.0605 84.3618 13.4908 84.1429 14.0306L81.8015 12.8927C82.0349 12.2654 82.3996 11.7257 82.8956 11.2734C83.4062 10.8066 84.0043 10.4419 84.69 10.1793C85.3756 9.91671 86.1196 9.78542 86.922 9.78542C87.8994 9.78542 88.7601 9.96777 89.5041 10.3325C90.2481 10.6826 90.8244 11.1786 91.2328 11.8205C91.6559 12.4478 91.8674 13.1845 91.8674 14.0306V21.952H89.154V19.9169L89.7667 19.8732C89.4603 20.3838 89.0956 20.8141 88.6726 21.1642C88.2495 21.4998 87.7681 21.7624 87.2284 21.952C86.6886 22.1271 86.0905 22.2146 85.434 22.2146Z" fill="white"/>
+          <path d="M94.5169 21.952V10.048H97.2084V12.6958L96.9896 12.3019C97.2668 11.412 97.6971 10.792 98.2806 10.4419C98.8788 10.0918 99.5936 9.91671 100.425 9.91671H101.125V12.4551H100.097C99.2799 12.4551 98.6235 12.7104 98.1275 13.2209C97.6315 13.7169 97.3835 14.4172 97.3835 15.3217V21.952H94.5169Z" fill="white"/>
+          <path d="M106.312 22.2146C105.48 22.2146 104.758 22.076 104.146 21.7988C103.533 21.5217 103.059 21.1278 102.723 20.6172C102.388 20.092 102.22 19.4866 102.22 18.8009C102.22 18.1445 102.366 17.5609 102.658 17.0504C102.949 16.5252 103.402 16.0875 104.014 15.7374C104.627 15.3873 105.4 15.1393 106.334 14.9934L110.229 14.3588V16.5471L106.881 17.116C106.312 17.2181 105.889 17.4005 105.612 17.6631C105.335 17.9257 105.196 18.2685 105.196 18.6915C105.196 19.1 105.349 19.4282 105.656 19.6762C105.976 19.9097 106.37 20.0264 106.837 20.0264C107.435 20.0264 107.96 19.9024 108.413 19.6544C108.88 19.3918 109.237 19.0344 109.485 18.5821C109.748 18.1299 109.879 17.6339 109.879 17.0941V14.0306C109.879 13.52 109.675 13.0969 109.266 12.7614C108.872 12.4113 108.347 12.2362 107.691 12.2362C107.078 12.2362 106.531 12.404 106.049 12.7395C105.583 13.0605 105.24 13.4908 105.021 14.0306L102.68 12.8927C102.913 12.2654 103.278 11.7257 103.774 11.2734C104.284 10.8066 104.882 10.4419 105.568 10.1793C106.254 9.91671 106.998 9.78542 107.8 9.78542C108.777 9.78542 109.638 9.96777 110.382 10.3325C111.126 10.6826 111.702 11.1786 112.111 11.8205C112.534 12.4478 112.745 13.1845 112.745 14.0306V21.952H110.032V19.9169L110.645 19.8732C110.338 20.3838 109.974 20.8141 109.551 21.1642C109.128 21.4998 108.646 21.7624 108.106 21.952C107.567 22.1271 106.968 22.2146 106.312 22.2146Z" fill="white"/>
+          <defs><clipPath id="ft-clip"><rect width="36.7059" height="15.0588" fill="white" transform="translate(0 8.4707)"/></clipPath></defs>
+        </svg>
+        <p>Colour in your world. Track every country, city, and region you've ever visited.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn" aria-label="Instagram">
+            <svg viewBox="0 0 256 256" fill="currentColor"><path d="M176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24ZM128,176a48,48,0,1,1,48-48A48.05,48.05,0,0,1,128,176Zm60-96a12,12,0,1,1,12-12A12,12,0,0,1,188,80Zm-28,48a32,32,0,1,1-32-32A32,32,0,0,1,160,128Z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.87a8.18 8.18 0 004.78 1.52V6.94a4.84 4.84 0 01-1.01-.25z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Bluesky">
+            <svg viewBox="0 0 600 530" fill="currentColor"><path d="m135.72 44.03c66.496 49.921 138.02 151.14 164.28 205.46 26.262-54.316 97.782-155.54 164.28-205.46 47.98-36.021 125.72-63.892 125.72 24.795 0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.3797-3.6904-10.832-3.7077-7.8964-0.0173-2.9357-1.1937 0.51669-3.7077 7.8964-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.4491-163.25-81.433-5.9562-21.282-16.111-152.36-16.111-170.07 0-88.687 77.742-60.816 125.72-24.795z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Medium">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-links-group">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="index.html#features">Features</a></li>
+            <li><a href="index.html#how-it-works">How it works</a></li>
+            <li><a href="index.html#passport">Passport</a></li>
+            <li><a href="badges.html">Badges</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-download">
+      <a href="index.html#download" class="footer-store-btn" aria-label="Download on the App Store">
+        <img src="App Store link.svg" alt="Download on the App Store" width="125" height="42" />
+      </a>
+      <a href="index.html#download" class="footer-store-btn" aria-label="Get it on Google Play">
+        <img src="Google Play link.svg" alt="Get it on Google Play" width="137" height="42" />
+      </a>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Novara. All rights reserved.</p>
+      <ul class="footer-bottom-links">
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    localStorage.setItem('theme', html.getAttribute('data-theme'));
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  else if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+    document.documentElement.setAttribute('data-theme', 'dark');
+
+  // Close mobile menu on nav link click
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelector('.nav-links').classList.remove('open');
+      const overlay = document.querySelector('.nav-mobile-overlay');
+      if (overlay) overlay.classList.remove('open');
+    });
+  });
+
+  // Badge filter
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('.badge-page-card').forEach(card => {
+        card.style.display = (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
+      });
+    });
+  });
+</script>
+</body>
+</html>

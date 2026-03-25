@@ -1,0 +1,2446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Novara — Colour In Your World</title>
+  <meta name="description" content="Novara turns every country, city, and region you visit into a visible mark on your personal world map. Track, log, and share your travels." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange:     #F56630;
+      --orange-mid: #F89874;
+      --orange-lt:  #FAB9A0;
+      --orange-pale:#FEF0EA;
+      --purple:     #20134B;
+      --purple-mid: #4D426F;
+      --white:      #FFFFFF;
+      --grey-50:    #F9FAFB;
+      --grey-100:   #F0F2F5;
+      --grey-200:   #E4E7EC;
+      --grey-400:   #98A2B3;
+      --grey-600:   #475367;
+      --text:       #20134B;
+      --nav-bg:     rgba(255,255,255,0.92);
+      --card-bg:    #FFFFFF;
+      --card-border:#E4E7EC;
+      --toggle-bg:  white;
+      --radius-sm:  8px;
+      --radius-md:  16px;
+      --radius-lg:  24px;
+      --radius-xl:  40px;
+      --shadow-sm:  0 1px 3px rgba(32,19,75,.08), 0 1px 2px rgba(32,19,75,.04);
+      --shadow-md:  0 4px 16px rgba(32,19,75,.10), 0 2px 6px rgba(32,19,75,.06);
+      --shadow-lg:  0 16px 48px rgba(32,19,75,.14), 0 4px 16px rgba(32,19,75,.08);
+    }
+
+    /* ── DARK MODE ──────────────────────────────────────────── */
+    [data-theme="dark"] {
+      --white:      #0D0820;
+      --grey-50:    #120A29;
+      --grey-100:   #170D35;
+      --grey-200:   #1D1144;
+      --grey-400:   #9892AC;
+      --grey-600:   #BAB6C7;
+      --text:       #E9E7ED;
+      --orange-pale:#2E1A12;
+      --nav-bg:     rgba(13,8,32,0.92);
+      --card-bg:    #120A29;
+      --card-border:#1D1144;
+      --toggle-bg:  #170D35;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,.20), 0 1px 2px rgba(0,0,0,.12);
+      --shadow-md:  0 4px 16px rgba(0,0,0,.25), 0 2px 6px rgba(0,0,0,.15);
+      --shadow-lg:  0 16px 48px rgba(0,0,0,.35), 0 4px 16px rgba(0,0,0,.20);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    h1, h2, h3, h4, h5, h6 { font-family: 'Bricolage Grotesque', sans-serif; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+
+    /* Topo contour background pattern */
+    .features, .how, .spotlight, .personas, #badges {
+      position: relative;
+    }
+    .features::before, .how::before, .spotlight::before, .personas::before, #badges::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .features::before { background-image: url('Topographic 1.svg'); }
+    .how::before { background-image: url('Topographic 2.svg'); }
+    .spotlight::before { background-image: url('Topographic 3.svg'); }
+    .personas::before { background-image: url('Topographic 4.svg'); }
+    #badges::before { background-image: url('Topographic 5.svg'); }
+    .features > *, .how > *, .spotlight > *, .personas > *, #badges > * {
+      position: relative;
+      z-index: 1;
+    }
+    [data-theme="dark"] .features::before,
+    [data-theme="dark"] .how::before,
+    [data-theme="dark"] .spotlight::before,
+    [data-theme="dark"] .personas::before,
+    [data-theme="dark"] #badges::before {
+      opacity: 0.03;
+      filter: brightness(0) invert(1);
+    }
+
+    /* ── NAVBAR ─────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--grey-200);
+    }
+    .nav-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; transition: transform .2s ease; }
+    .nav-logo:hover { transform: scale(1.04); }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--grey-600);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* Mobile menu */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform .2s, opacity .2s;
+    }
+
+    /* Nav button short label */
+    .nav-btn-short { display: none; }
+
+    /* CTA buttons — equal width */
+    .cta-buttons .btn { min-width: 182px; justify-content: center; }
+
+    /* Theme toggle */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--grey-200);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      transition: background .2s, border-color .2s, color .2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover {
+      background: var(--grey-100);
+      border-color: var(--grey-400);
+    }
+    .theme-toggle .icon-moon, .theme-toggle .icon-sun { font-size: 18px; line-height: 1; }
+    .theme-toggle .icon-moon { display: block; }
+    .theme-toggle .icon-sun { display: none; }
+    [data-theme="dark"] .theme-toggle .icon-moon { display: none !important; }
+    [data-theme="dark"] .theme-toggle .icon-sun { display: block !important; }
+
+    /* Dark mode overrides for nav logo — recolour text paths */
+    [data-theme="dark"] .nav-logo svg path[fill="#20134B"] { fill: #E9E7ED; }
+
+    /* Dark mode: feature card borders */
+    [data-theme="dark"] .feature-card { border-color: var(--card-border); }
+    [data-theme="dark"] .feature-card.accent { border-color: var(--purple-mid); }
+
+    /* Dark mode: section-specific */
+    [data-theme="dark"] .section-tag { color: var(--orange-mid); }
+    [data-theme="dark"] .hero-stats-bar { background: #120A29; }
+    [data-theme="dark"] .passport-mock { background: var(--card-bg); border-color: var(--card-border); }
+    [data-theme="dark"] .passport-stat { background: var(--grey-50); border-color: var(--card-border); }
+    [data-theme="dark"] .region-card { background: var(--card-bg); border-color: var(--card-border); }
+    [data-theme="dark"] .region-card-info strong { color: var(--text); }
+    [data-theme="dark"] .friend-card { background: var(--card-bg); border-color: var(--card-border); }
+    [data-theme="dark"] .friend-card strong { color: var(--text); }
+    [data-theme="dark"] .friend-pct { color: var(--text); }
+    [data-theme="dark"] .friend-bar { background: var(--grey-200); }
+    [data-theme="dark"] .step-num { color: white; }
+    [data-theme="dark"] .step p { color: var(--grey-600); }
+    [data-theme="dark"] .feature-tag { border-color: rgba(245,102,48,.2); }
+    [data-theme="dark"] .passport-mock-share { background: var(--orange); color: white; }
+    [data-theme="dark"] .passport-countries-title { color: var(--grey-600); }
+    [data-theme="dark"] .toggle.off { background: var(--grey-200); }
+
+    /* Mobile theme toggle inside nav menu */
+    .nav-theme-item { display: none; }
+    .nav-theme-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 16px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      width: 100%;
+      text-align: left;
+    }
+    .nav-theme-btn i { font-size: 18px; }
+    .nav-theme-lbl-dark { display: inline; }
+    .nav-theme-lbl-light { display: none; }
+    [data-theme="dark"] .nav-theme-lbl-dark { display: none !important; }
+    [data-theme="dark"] .nav-theme-lbl-light { display: inline !important; }
+
+    /* Dark mode: mobile menu */
+    [data-theme="dark"] .nav-links.open { background: var(--grey-50); }
+    [data-theme="dark"] .nav-links li { border-bottom-color: var(--grey-200); }
+    [data-theme="dark"] .nav-links a { color: var(--text); }
+    [data-theme="dark"] .nav-mobile-overlay { background: rgba(0,0,0,.6); }
+
+    /* Dark mode: text colours that use hardcoded --purple */
+    [data-theme="dark"] .feature-card h3,
+    [data-theme="dark"] .step h3,
+    [data-theme="dark"] .passport-mock-title,
+    [data-theme="dark"] .section-desc { color: var(--text); }
+    [data-theme="dark"] .feature-card p,
+    [data-theme="dark"] .step p { color: var(--grey-600); }
+    [data-theme="dark"] .hero-stat-num { color: var(--text); }
+    [data-theme="dark"] .passport-stat-num { color: var(--text); }
+    [data-theme="dark"] .passport-stat-num.accent { color: var(--orange); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform .15s, box-shadow .15s, background .15s;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-primary {
+      background: #E8551E;
+      color: var(--white);
+      padding: 10px 22px;
+      border-radius: 100px;
+      box-shadow: 0 2px 8px rgba(245,102,48,.35);
+      text-shadow: 0 1px 2px rgba(0,0,0,.12);
+    }
+    .btn-primary:hover {
+      background: #D14A16;
+      box-shadow: 0 4px 16px rgba(245,102,48,.45);
+    }
+    .btn-outline {
+      background: transparent;
+      color: white;
+      padding: 13px 26px;
+      border-radius: 100px;
+      border: 2px solid rgba(255,255,255,.45);
+      font-size: 15px;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.7); }
+    .btn-dark {
+      background: var(--purple);
+      color: var(--white);
+      padding: 13px 28px;
+      border-radius: 100px;
+    }
+    .btn-dark:hover { background: var(--purple-mid); }
+
+    /* ── HERO ──────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--purple);
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(32,19,75,.7) 0%, rgba(32,19,75,.45) 35%, rgba(32,19,75,.25) 55%, rgba(32,19,75,.6) 100%);
+    }
+
+    .hero-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 120px 24px 0;
+      flex-shrink: 0;
+    }
+
+    /* Phone mockup */
+    .hero-phone-wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      margin-top: auto;
+      padding-top: 40px;
+    }
+    .hero-phone {
+      width: 280px;
+      height: 560px;
+      background: #111;
+      border-radius: 40px;
+      border: 4px solid #333;
+      box-shadow: 0 30px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.08);
+      position: relative;
+      overflow: hidden;
+      transform: translateY(80px);
+    }
+    .hero-phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background: #111;
+      border-radius: 0 0 20px 20px;
+      z-index: 2;
+    }
+    .hero-phone-screen {
+      position: absolute;
+      inset: 4px;
+      border-radius: 36px;
+      overflow: hidden;
+      background: var(--purple);
+      display: flex;
+      flex-direction: column;
+    }
+    .phone-map {
+      flex: 1;
+      position: relative;
+      background: linear-gradient(135deg, #170D35 0%, #1D1144 50%, #170D35 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .phone-map::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 160% 100% at 50% 50%, transparent 0%, rgba(26,14,58,.4) 100%);
+      z-index: 1;
+    }
+    /* Stylised map continents */
+    .map-continent {
+      position: absolute;
+      border-radius: 30% 40% 30% 50%;
+      opacity: .85;
+    }
+    .map-continent.visited { background: var(--orange); }
+    .map-continent.unvisited { background: rgba(255,255,255,.08); }
+    /* Europe */
+    .mc-europe { width: 32px; height: 28px; top: 28%; left: 52%; border-radius: 35% 30% 40% 25%; }
+    /* Africa */
+    .mc-africa { width: 28px; height: 40px; top: 42%; left: 50%; border-radius: 30% 35% 45% 30%; }
+    /* Asia */
+    .mc-asia { width: 48px; height: 34px; top: 26%; left: 60%; border-radius: 25% 40% 30% 35%; }
+    /* N. America */
+    .mc-namerica { width: 36px; height: 36px; top: 22%; left: 22%; border-radius: 40% 30% 35% 25%; }
+    /* S. America */
+    .mc-samerica { width: 22px; height: 38px; top: 48%; left: 32%; border-radius: 30% 35% 45% 40%; }
+    /* Oceania */
+    .mc-oceania { width: 26px; height: 18px; top: 58%; left: 72%; border-radius: 25% 40% 30% 35%; }
+
+    .phone-tab-bar {
+      height: 52px;
+      background: rgba(20,12,50,.95);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 12px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .phone-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 9px;
+      color: rgba(255,255,255,.4);
+      font-family: 'Inter', sans-serif;
+    }
+    .phone-tab.active { color: var(--orange); }
+    .phone-tab-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .phone-tab.active .phone-tab-icon { background: var(--orange); color: white; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245,102,48,.18);
+      border: 1px solid rgba(245,102,48,.35);
+      color: var(--orange-mid);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+    .hero-badge-dot {
+      width: 8px; height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+      box-shadow: 0 0 0 0 rgba(34,197,94,.5);
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(34,197,94,.5); }
+      70% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+      100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+    }
+
+    /* ── HERO ENTRANCE + FLOAT ANIMATIONS ──────────────────── */
+    @keyframes hero-enter {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-12px); }
+    }
+    .hero-badge {
+      animation: hero-enter .6s ease forwards;
+      animation-delay: .1s;
+      opacity: 0;
+    }
+    .hero h1 {
+      animation: hero-enter .6s ease forwards;
+      animation-delay: .2s;
+      opacity: 0;
+    }
+    .hero-sub {
+      animation: hero-enter .6s ease forwards;
+      animation-delay: .35s;
+      opacity: 0;
+    }
+    .hero-cta {
+      animation: hero-enter .6s ease forwards;
+      animation-delay: .5s;
+      opacity: 0;
+    }
+    /* Phone: entrance first (.4s delay, .8s duration → done at 1.2s), then float */
+    .hero-phone-wrapper {
+      animation: hero-enter .8s ease forwards .4s, float 5s ease-in-out infinite 1.2s;
+      opacity: 0;
+    }
+
+    .hero h1 {
+      font-size: clamp(48px, 6.5vw, 72px);
+      font-weight: 700;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 24px;
+      letter-spacing: -.04em;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--orange) 0%, var(--orange-mid) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 400;
+      color: rgba(255,255,255,.85);
+      max-width: 580px;
+      margin: 0 auto 44px;
+      line-height: 1.45;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 56px;
+      justify-content: center;
+    }
+    .store-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 14px;
+      width: 210px;
+      background: linear-gradient(135deg, rgba(255,255,255,.22) 0%, rgba(255,255,255,.10) 100%);
+      border: 1px solid rgba(255,255,255,.45);
+      border-radius: 100px;
+      padding: 14px 24px;
+      text-decoration: none;
+      color: white;
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      box-shadow: 0 8px 32px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.35), inset 0 -1px 0 rgba(0,0,0,.08);
+      transition: background .2s, border-color .2s, box-shadow .2s, transform .15s;
+    }
+    .store-btn:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,.16) 100%);
+      border-color: rgba(255,255,255,.65);
+      box-shadow: 0 12px 40px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.45), inset 0 -1px 0 rgba(0,0,0,.10);
+    }
+    .store-btn-icon { flex-shrink: 0; line-height: 1; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; }
+    .store-btn-icon i { font-size: 26px; line-height: 1; display: block; }
+    .store-btn-text { display: flex; flex-direction: column; }
+    .store-btn-label { font-size: 11px; opacity: .75; font-weight: 400; line-height: 1; margin-bottom: 2px; }
+    .store-btn-name  { font-size: 17px; font-weight: 700; line-height: 1.2; }
+
+    .hero-stats-bar {
+      background: var(--purple);
+      padding: 40px 24px;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .hero-stats > div { text-align: center; }
+    .hero-stat-num {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+    .hero-stat-label {
+      font-size: 14px;
+      color: rgba(255,255,255,.65);
+      margin-top: 6px;
+      line-height: 1.45;
+    }
+    .hero-stat-divider {
+      width: 1px;
+      background: rgba(255,255,255,.15);
+      align-self: stretch;
+    }
+
+    /* ── (proof bar removed — redundant with stats bar) ──── */
+
+    /* ── SECTION LAYOUT ────────────────────────────────────── */
+    section { padding: 100px 24px; }
+    .section-inner { max-width: 1160px; margin: 0 auto; }
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .section-tag::before {
+      content: '';
+      width: 20px; height: 2px;
+      background: var(--orange);
+      border-radius: 2px;
+    }
+    h2 {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -.04em;
+      color: var(--text);
+    }
+    .section-desc {
+      font-size: 18px;
+      color: var(--grey-600);
+      max-width: 560px;
+      margin-top: 16px;
+      line-height: 1.45;
+    }
+
+    /* ── FEATURES ──────────────────────────────────────────── */
+    .features { background-color: var(--white); }
+    .features-header { text-align: center; margin-bottom: 64px; }
+    .features-header .section-desc { margin: 16px auto 0; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .feature-card.accent {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: center;
+      padding: 48px 40px;
+    }
+    .feature-card.accent .feature-card-text { }
+    .feature-card.accent .feature-visual {
+      background: rgba(255,255,255,.06);
+      border-radius: var(--radius-md);
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card.accent .feature-visual img {
+      width: 90%;
+      height: auto;
+      opacity: .35;
+      filter: brightness(2);
+    }
+
+    /* ── INTERACTIVE MAP ───────────────────────────────────── */
+    .map-interactive {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      cursor: grab;
+      position: relative;
+      border-radius: var(--radius-md);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .map-interactive.dragging { cursor: grabbing; }
+    .map-layer {
+      width: 100%; height: 100%;
+      transform-origin: center center;
+      position: relative;
+      will-change: transform;
+    }
+    .map-svg-world {
+      width: 100%; height: 100%;
+      display: block;
+    }
+    .map-country {
+      fill: rgba(255,255,255,.07);
+      stroke: rgba(255,255,255,.2);
+      stroke-width: 0.4;
+    }
+    .map-country.visited {
+      fill: rgba(245,102,48,.65);
+      stroke: rgba(245,102,48,.9);
+      stroke-width: 0.6;
+      animation: country-visit 4s ease-in-out infinite;
+    }
+    @keyframes country-visit {
+      0%, 100% { opacity: 0.3; }
+      50%       { opacity: 1.0; }
+    }
+    .map-hint {
+      position: absolute;
+      bottom: 10px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,255,255,.45);
+      pointer-events: none;
+      white-space: nowrap;
+      letter-spacing: .06em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .feature-card {
+      background: var(--grey-50);
+      border: 1px solid var(--grey-200);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+    }
+    .feature-card:hover {
+      box-shadow: 0 8px 24px rgba(32,19,75,.08), 0 2px 6px rgba(32,19,75,.05);
+      border-color: var(--grey-200);
+    }
+    .feature-icon i {
+      transition: transform .2s ease;
+    }
+    .feature-card:hover .feature-icon i {
+      font-family: "Phosphor-Fill" !important;
+      transform: scale(1.15);
+    }
+    .feature-card.accent {
+      background: var(--purple);
+      border-color: var(--purple-mid);
+    }
+    .feature-card.accent:hover {
+      box-shadow: 0 8px 32px rgba(32,19,75,.25);
+      border-color: var(--purple-mid);
+    }
+    .feature-icon {
+      width: 52px; height: 52px;
+      background: var(--orange-pale);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      font-size: 24px;
+    }
+    .feature-card.accent .feature-icon {
+      background: rgba(245,102,48,.2);
+    }
+    .feature-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--purple);
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+    .feature-card.accent h3 { color: white; }
+    .feature-card p {
+      font-size: 16px;
+      color: var(--grey-600);
+      line-height: 1.45;
+    }
+    .feature-card.accent p { color: rgba(255,255,255,.65); }
+    .feature-tag {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--orange);
+      background: var(--orange-pale);
+      padding: 4px 10px;
+      border-radius: 100px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+    .feature-card.accent .feature-tag {
+      color: var(--orange-mid);
+      background: rgba(245,102,48,.2);
+    }
+
+    /* ── HOW IT WORKS ──────────────────────────────────────── */
+    .how { background-color: var(--grey-50); }
+    .how-header { text-align: center; margin-bottom: 72px; }
+    .how-header .section-desc { margin: 16px auto 0; }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      position: relative;
+    }
+    .steps-trail {
+      position: absolute;
+      top: -30px;
+      left: 12%;
+      width: 76%;
+      height: 120px;
+      z-index: 0;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .steps-trail path {
+      fill: none;
+      stroke: var(--orange);
+      stroke-width: 2;
+      stroke-dasharray: 10 7;
+      stroke-linecap: round;
+      opacity: .45;
+    }
+    [data-theme="dark"] .steps-trail path {
+      opacity: .35;
+    }
+    .step {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .step-num {
+      width: 56px; height: 56px;
+      background: var(--orange);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 auto 28px;
+      position: relative;
+      box-shadow: 0 4px 16px rgba(245,102,48,.4);
+    }
+    .step h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--purple);
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+    .step p {
+      font-size: 16px;
+      color: var(--grey-600);
+      line-height: 1.45;
+      max-width: 260px;
+      margin: 0 auto;
+    }
+
+    /* ── SPOTLIGHT SECTIONS ────────────────────────────────── */
+    .spotlight {
+      background-color: var(--white);
+      padding: 80px 24px;
+    }
+    .spotlight-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .spotlight-inner.reverse { direction: rtl; }
+    .spotlight-inner.reverse > * { direction: ltr; }
+    .spotlight-content h2 { margin-bottom: 16px; }
+    .spotlight-content p {
+      font-size: 18px;
+      color: var(--grey-600);
+      line-height: 1.45;
+      margin-bottom: 20px;
+    }
+    .spotlight-visual {
+      background-color: var(--grey-50);
+      background-image: radial-gradient(circle, var(--grey-200) 1.5px, transparent 1.5px);
+      background-size: 22px 22px;
+      border: 1px solid var(--grey-200);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Passport stats mock */
+    .passport-mock {
+      background: var(--white);
+      border: 1px solid var(--grey-200);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+    .passport-mock-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--grey-100);
+    }
+    .passport-mock-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--purple);
+      line-height: 1.45;
+    }
+    .passport-mock-share {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--orange);
+      background: var(--orange-pale);
+      padding: 5px 12px;
+      border-radius: 100px;
+    }
+    .passport-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .passport-stat {
+      text-align: center;
+      padding: 16px 8px;
+      background: var(--grey-50);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--grey-100);
+    }
+    .passport-stat-num {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--purple);
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+    .passport-stat-num.accent { color: var(--orange); }
+    .passport-stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--grey-600);
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      line-height: 1.2;
+    }
+    .passport-countries {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--grey-100);
+    }
+    .passport-countries-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--grey-600);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .passport-flags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .passport-flag {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--white);
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+    .passport-flag svg {
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    /* Region toggle cards */
+    .region-cards { display: flex; flex-direction: column; gap: 12px; }
+    .region-card {
+      background: var(--white);
+      border: 1px solid var(--grey-200);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+    .region-card-left { display: flex; align-items: center; gap: 12px; }
+    .region-card-flag {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--orange-pale);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .region-card-info strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--purple);
+    }
+    .region-card-info span {
+      font-size: 12px;
+      color: var(--grey-600);
+      line-height: 1.45;
+    }
+    .toggle {
+      width: 40px; height: 22px;
+      border-radius: 100px;
+      position: relative;
+      cursor: default;
+    }
+    .toggle.on  { background: var(--orange); }
+    .toggle.off { background: var(--grey-200); }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      width: 16px; height: 16px;
+      background: var(--toggle-bg);
+      border-radius: 50%;
+      transition: left .2s;
+    }
+    .toggle.on::after  { left: calc(100% - 19px); }
+    .toggle.off::after { left: 3px; }
+
+    /* Friends cards */
+    .friends-list { display: flex; flex-direction: column; gap: 12px; }
+    .friend-card {
+      background: var(--white);
+      border: 1px solid var(--grey-200);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .friend-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .friend-avatar-you {
+      background: linear-gradient(135deg, var(--orange) 0%, var(--orange-mid) 100%);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .friend-meta { flex: 1; }
+    .friend-meta strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--purple);
+    }
+    .friend-bar {
+      margin-top: 6px;
+      height: 6px;
+      background: var(--grey-100);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .friend-bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--orange) 0%, var(--orange-mid) 100%);
+    }
+    .friend-pct {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--purple);
+      flex-shrink: 0;
+      line-height: 1.45;
+    }
+
+    /* ── TARGET USERS / PERSONAS ──────────────────────────── */
+    .personas { background-color: var(--grey-50); }
+    .personas-header { text-align: center; margin-bottom: 64px; }
+    .personas-header .section-desc { margin: 16px auto 0; }
+    .personas-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .persona-card {
+      background: linear-gradient(145deg, var(--orange) 0%, #C94315 100%);
+      border: none;
+      border-radius: 0;
+      padding: 36px 28px;
+      text-align: center;
+      transition: transform .2s;
+      position: relative;
+      --s: 28px;
+      --r: 9px;
+      -webkit-mask:
+        radial-gradient(circle var(--r) at calc(var(--s) / 2) 0, transparent 98%, #000 100%) 0 0 / var(--s) 100% repeat-x,
+        radial-gradient(circle var(--r) at calc(var(--s) / 2) 100%, transparent 98%, #000 100%) 0 0 / var(--s) 100% repeat-x,
+        radial-gradient(circle var(--r) at 0 calc(var(--s) / 2), transparent 98%, #000 100%) 0 0 / 100% var(--s) repeat-y,
+        radial-gradient(circle var(--r) at 100% calc(var(--s) / 2), transparent 98%, #000 100%) 0 0 / 100% var(--s) repeat-y;
+      -webkit-mask-composite: source-in, source-in, source-in;
+      mask:
+        radial-gradient(circle var(--r) at calc(var(--s) / 2) 0, transparent 98%, #000 100%) 0 0 / var(--s) 100% repeat-x,
+        radial-gradient(circle var(--r) at calc(var(--s) / 2) 100%, transparent 98%, #000 100%) 0 0 / var(--s) 100% repeat-x,
+        radial-gradient(circle var(--r) at 0 calc(var(--s) / 2), transparent 98%, #000 100%) 0 0 / 100% var(--s) repeat-y,
+        radial-gradient(circle var(--r) at 100% calc(var(--s) / 2), transparent 98%, #000 100%) 0 0 / 100% var(--s) repeat-y;
+      mask-composite: intersect;
+    }
+    .persona-card:hover {
+      transform: translateY(-4px);
+    }
+    .persona-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.65);
+      background: rgba(255,255,255,.12);
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .persona-icon i { color: white !important; }
+    .persona-quote {
+      font-size: 14px;
+      font-weight: 600;
+      font-style: italic;
+      color: rgba(255,255,255,.92);
+      margin-bottom: 16px;
+      line-height: 1.45;
+    }
+    .persona-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 12px;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+    .persona-card p {
+      font-size: 16px;
+      color: rgba(255,255,255,.95);
+      line-height: 1.45;
+    }
+
+    /* ── CTA SECTION ───────────────────────────────────────── */
+    .cta-section {
+      background: var(--purple);
+      position: relative;
+      overflow: hidden;
+      padding: 100px 24px;
+      text-align: center;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 80% at 50% 50%, rgba(245,102,48,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    /* World map background using Earth.svg */
+    .cta-map-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .cta-map-bg img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 110%;
+      max-width: 1400px;
+      height: auto;
+      opacity: .07;
+      filter: brightness(3);
+    }
+    /* Flight paths overlay */
+    .cta-flights {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .cta-flights svg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 110%;
+      max-width: 1400px;
+      height: auto;
+    }
+    /* Flight arc animation */
+    .flight-path {
+      fill: none;
+      stroke: var(--orange);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      opacity: 0;
+      animation: flight-draw 4s ease-in-out infinite;
+    }
+    .flight-path:nth-child(1) { animation-delay: 0s; }
+    .flight-path:nth-child(2) { animation-delay: 1.2s; }
+    .flight-path:nth-child(3) { animation-delay: 2.4s; }
+    .flight-path:nth-child(4) { animation-delay: 3.6s; }
+    .flight-path:nth-child(5) { animation-delay: 0.8s; }
+    @keyframes flight-draw {
+      0% { stroke-dashoffset: 300; stroke-dasharray: 300; opacity: 0; }
+      15% { opacity: .4; }
+      50% { stroke-dashoffset: 0; opacity: .5; }
+      85% { opacity: .3; }
+      100% { stroke-dashoffset: -300; stroke-dasharray: 300; opacity: 0; }
+    }
+    /* Glowing dots at flight endpoints */
+    .flight-dot {
+      fill: var(--orange);
+      opacity: 0;
+      animation: flight-dot-pulse 4s ease-in-out infinite;
+    }
+    .flight-dot:nth-child(1) { animation-delay: 0s; }
+    .flight-dot:nth-child(2) { animation-delay: 0s; }
+    .flight-dot:nth-child(3) { animation-delay: 1.2s; }
+    .flight-dot:nth-child(4) { animation-delay: 1.2s; }
+    .flight-dot:nth-child(5) { animation-delay: 2.4s; }
+    .flight-dot:nth-child(6) { animation-delay: 2.4s; }
+    .flight-dot:nth-child(7) { animation-delay: 3.6s; }
+    .flight-dot:nth-child(8) { animation-delay: 3.6s; }
+    .flight-dot:nth-child(9) { animation-delay: 0.8s; }
+    .flight-dot:nth-child(10) { animation-delay: 0.8s; }
+    @keyframes flight-dot-pulse {
+      0%, 100% { opacity: 0; r: 3; }
+      20% { opacity: .6; r: 4; }
+      50% { opacity: .8; r: 5; }
+      80% { opacity: .5; r: 4; }
+    }
+    .cta-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-section h2 {
+      color: white;
+      font-size: clamp(36px, 5vw, 56px);
+      margin-bottom: 20px;
+      line-height: 1;
+      letter-spacing: -.04em;
+    }
+    .cta-section p {
+      font-size: 18px;
+      color: rgba(255,255,255,.75);
+      margin-bottom: 48px;
+      line-height: 1.45;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    /* ── FOOTER ────────────────────────────────────────────── */
+    footer {
+      background: var(--purple);
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding: 60px 24px 40px;
+    }
+    .footer-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 48px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+    .footer-brand p {
+      font-size: 14px;
+      color: rgba(255,255,255,.55);
+      margin-top: 16px;
+      max-width: 260px;
+      line-height: 1.45;
+    }
+    .footer-links-group { display: flex; gap: 64px; flex-wrap: wrap; }
+    .footer-col h4 {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,.5);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a {
+      font-size: 14px;
+      color: rgba(255,255,255,.65);
+      text-decoration: none;
+      transition: color .2s;
+      line-height: 1.45;
+    }
+    .footer-col a:hover { color: var(--white); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-bottom p {
+      font-size: 12px;
+      color: rgba(255,255,255,.45);
+      line-height: 1.45;
+    }
+    .footer-bottom-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+    .footer-bottom-links a {
+      font-size: 12px;
+      color: rgba(255,255,255,.45);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-bottom-links a:hover { color: rgba(255,255,255,.7); }
+    .footer-social { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .social-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .15s; color: rgba(255,255,255,.7);
+      text-decoration: none; flex-shrink: 0;
+    }
+    .social-btn:hover { background: rgba(255,255,255,.18); transform: translateY(-2px); color: white; }
+    .social-btn svg { width: 16px; height: 16px; display: block; }
+    .footer-download {
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+      padding: 28px 0; border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .footer-store-btn { display: inline-block; transition: opacity .2s, transform .15s; line-height: 0; }
+    .footer-store-btn:hover { opacity: .85; transform: translateY(-2px); }
+
+    /* ── SCROLL REVEAL ANIMATIONS ─────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+
+    /* ── MOBILE MENU ──────────────────────────────────────── */
+    .nav-mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(32,19,75,.5);
+      z-index: 99;
+    }
+    .nav-mobile-overlay.open { display: block; }
+
+    /* ── RESPONSIVE ────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .feature-card.accent { grid-column: 1 / -1; }
+    }
+    @media (max-width: 860px) {
+      .hero { min-height: auto; }
+      .hero-inner { padding: 100px 24px 0; }
+      .hero-phone { width: 220px; height: 440px; transform: translateY(60px); border-radius: 32px; }
+      .hero-phone-notch { width: 100px; height: 24px; }
+      .hero-phone-screen { border-radius: 28px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card.accent { grid-template-columns: 1fr; padding: 32px 24px; }
+      .steps { grid-template-columns: 1fr; }
+      .steps-trail { display: none; }
+      .spotlight-inner, .spotlight-inner.reverse { grid-template-columns: 1fr; direction: ltr; gap: 40px; }
+      .personas-grid { grid-template-columns: 1fr; }
+      .footer-top { flex-direction: column; }
+      .footer-links-group { gap: 32px; }
+      .nav-links {
+        display: none;
+        position: fixed;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: var(--white);
+        flex-direction: column;
+        padding: 24px;
+        gap: 0;
+        box-shadow: var(--shadow-lg);
+        z-index: 100;
+        border-bottom: 1px solid var(--grey-200);
+      }
+      .nav-btn-full { display: none; }
+      .nav-btn-short { display: inline; }
+      .theme-toggle { display: none; }
+      .nav-links.open { display: flex; }
+      .nav-links li { border-bottom: 1px solid var(--grey-100); }
+      .nav-links a {
+        display: block;
+        padding: 16px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .nav-hamburger { display: flex; }
+      .nav-theme-item { display: block !important; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 72px 20px; }
+      .passport-stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-links-group { flex-direction: column; gap: 20px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+
+    /* ── BADGES & REWARDS ─────────────────────────────────── */
+    #badges { background-color: var(--grey-50); }
+    .badges-header { text-align: center; margin-bottom: 56px; }
+    .badges-header .section-desc { margin: 16px auto 0; }
+    .badges-showcase {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 56px;
+    }
+    .badge-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+      padding: 28px 16px;
+      background: var(--white);
+      border: 1px solid var(--grey-200);
+      border-radius: var(--radius-lg);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .badge-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 40px rgba(32,19,75,.1);
+    }
+    .badge-frame {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(245,102,48,.12) 0%, rgba(245,102,48,.05) 100%);
+      border: 2px solid rgba(245,102,48,.2);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), background .2s, box-shadow .35s;
+    }
+    .badge-card:hover .badge-frame {
+      transform: scale(1.08);
+      background: linear-gradient(135deg, rgba(245,102,48,.22) 0%, rgba(245,102,48,.1) 100%);
+      box-shadow: 0 0 0 6px rgba(245,102,48,.1), 0 0 24px rgba(245,102,48,.15);
+    }
+    .badge-img {
+      width: 48px; height: 48px; display: block;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .badge-card:hover .badge-img { transform: scale(1.12) rotate(-6deg); }
+    .badge-name { font-size: 14px; font-weight: 700; color: var(--purple); margin: 0; line-height: 1.3; }
+    .badge-hint { font-size: 12px; color: var(--grey-600); margin: 0; line-height: 1.4; }
+    .badges-cta { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .badges-cta-note { font-size: 13px; color: var(--grey-600); margin: 0; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px;
+      background: var(--white);
+      border: 1.5px solid var(--grey-200);
+      border-radius: 100px;
+      color: var(--purple);
+      font-size: 15px; font-weight: 600;
+      text-decoration: none;
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--orange);
+      box-shadow: 0 4px 16px rgba(245,102,48,.15);
+      transform: translateY(-2px);
+    }
+    [data-theme="dark"] #badges { background-color: var(--grey-50); }
+    [data-theme="dark"] .badge-card { background: var(--grey-100); border-color: var(--card-border); }
+    [data-theme="dark"] .badge-card:hover { box-shadow: 0 16px 40px rgba(0,0,0,.3); }
+    [data-theme="dark"] .badge-name { color: var(--text); }
+    [data-theme="dark"] .badge-hint { color: var(--grey-600); }
+    [data-theme="dark"] .badge-frame { border-color: rgba(245,102,48,.35); }
+    [data-theme="dark"] .badge-img { filter: brightness(0) invert(1); }
+    [data-theme="dark"] .badges-cta-note { color: var(--grey-600); }
+    [data-theme="dark"] .btn-secondary { background: var(--grey-100); border-color: var(--card-border); color: var(--text); }
+    @media (max-width: 860px) {
+      .badges-showcase { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    }
+    @media (max-width: 600px) {
+      .badges-showcase { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .badge-card { padding: 20px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ──────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <!-- Coloured Logo -->
+    <a href="#" class="nav-logo" aria-label="Novara home">
+      <svg width="122" height="32" viewBox="0 0 122 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#nav-clip)">
+          <path d="M26.117 8.4707H36.4699L27.5287 23.5295H17.1758L26.117 8.4707Z" fill="#F56630"/>
+          <path d="M16.7068 8.4707H24.2362L15.295 23.5295H7.76562L16.7068 8.4707Z" fill="#FA9874"/>
+          <path d="M9.17555 8.4707H14.8226L5.88143 23.5295H0.234375L9.17555 8.4707Z" fill="#FCB59A"/>
+        </g>
+        <path d="M42.8241 21.952V10.048H45.5156V12.3894L45.2968 11.9737C45.574 11.2588 46.0262 10.7191 46.6535 10.3544C47.2954 9.97507 48.0394 9.78542 48.8855 9.78542C49.7608 9.78542 50.534 9.97507 51.205 10.3544C51.8907 10.7337 52.4232 11.2661 52.8024 11.9518C53.1817 12.6228 53.3714 13.4033 53.3714 14.2932V21.952H50.5048V14.9715C50.5048 14.4464 50.4027 13.9941 50.1985 13.6148C49.9942 13.2355 49.7097 12.9438 49.345 12.7395C48.9949 12.5207 48.5792 12.4113 48.0977 12.4113C47.6309 12.4113 47.2152 12.5207 46.8504 12.7395C46.4857 12.9438 46.2013 13.2355 45.997 13.6148C45.7928 13.9941 45.6907 14.4464 45.6907 14.9715V21.952H42.8241Z" fill="#20134B"/>
+        <path d="M61.6161 22.2146C60.449 22.2146 59.3841 21.9447 58.4213 21.4049C57.473 20.8652 56.7144 20.1285 56.1455 19.1948C55.5911 18.2612 55.314 17.1962 55.314 16C55.314 14.8038 55.5911 13.7388 56.1455 12.8052C56.7144 11.8715 57.473 11.1348 58.4213 10.5951C59.3695 10.0553 60.4344 9.78542 61.6161 9.78542C62.7831 9.78542 63.8408 10.0553 64.789 10.5951C65.7373 11.1348 66.4886 11.8715 67.0429 12.8052C67.6118 13.7242 67.8963 14.7892 67.8963 16C67.8963 17.1962 67.6118 18.2612 67.0429 19.1948C66.474 20.1285 65.7154 20.8652 64.7671 21.4049C63.8189 21.9447 62.7686 22.2146 61.6161 22.2146ZM61.6161 19.5887C62.258 19.5887 62.8196 19.4355 63.301 19.1292C63.797 18.8228 64.1836 18.3998 64.4608 17.86C64.7526 17.3057 64.8984 16.6857 64.8984 16C64.8984 15.2998 64.7526 14.6871 64.4608 14.1619C64.1836 13.6221 63.797 13.1991 63.301 12.8927C62.8196 12.5718 62.258 12.4113 61.6161 12.4113C60.9596 12.4113 60.3834 12.5718 59.8874 12.8927C59.3914 13.1991 58.9975 13.6221 58.7057 14.1619C58.4286 14.6871 58.29 15.2998 58.29 16C58.29 16.6857 58.4286 17.3057 58.7057 17.86C58.9975 18.3998 59.3914 18.8228 59.8874 19.1292C60.3834 19.4355 60.9596 19.5887 61.6161 19.5887Z" fill="#20134B"/>
+        <path d="M73.4452 21.952L68.7624 10.048H71.8916L75.2833 19.4137H74.1236L77.5372 10.048H80.6664L75.9836 21.952H73.4452Z" fill="#20134B"/>
+        <path d="M85.434 22.2146C84.6025 22.2146 83.8803 22.076 83.2676 21.7988C82.6549 21.5217 82.1808 21.1278 81.8453 20.6172C81.5098 20.092 81.342 19.4866 81.342 18.8009C81.342 18.1445 81.4879 17.5609 81.7796 17.0504C82.0714 16.5252 82.5236 16.0875 83.1363 15.7374C83.7491 15.3873 84.5222 15.1393 85.4559 14.9934L89.3509 14.3588V16.5471L86.0029 17.116C85.434 17.2181 85.0109 17.4005 84.7338 17.6631C84.4566 17.9257 84.318 18.2685 84.318 18.6915C84.318 19.1 84.4712 19.4282 84.7775 19.6762C85.0985 19.9097 85.4923 20.0264 85.9592 20.0264C86.5573 20.0264 87.0825 19.9024 87.5347 19.6544C88.0015 19.3918 88.3589 19.0344 88.6069 18.5821C88.8695 18.1299 89.0008 17.6339 89.0008 17.0941V14.0306C89.0008 13.52 88.7966 13.0969 88.3881 12.7614C87.9942 12.4113 87.4691 12.2362 86.8126 12.2362C86.1999 12.2362 85.6528 12.404 85.1714 12.7395C84.7046 13.0605 84.3618 13.4908 84.1429 14.0306L81.8015 12.8927C82.0349 12.2654 82.3996 11.7257 82.8956 11.2734C83.4062 10.8066 84.0043 10.4419 84.69 10.1793C85.3756 9.91671 86.1196 9.78542 86.922 9.78542C87.8994 9.78542 88.7601 9.96777 89.5041 10.3325C90.2481 10.6826 90.8244 11.1786 91.2328 11.8205C91.6559 12.4478 91.8674 13.1845 91.8674 14.0306V21.952H89.154V19.9169L89.7667 19.8732C89.4603 20.3838 89.0956 20.8141 88.6726 21.1642C88.2495 21.4998 87.7681 21.7624 87.2284 21.952C86.6886 22.1271 86.0905 22.2146 85.434 22.2146Z" fill="#20134B"/>
+        <path d="M94.5169 21.952V10.048H97.2084V12.6958L96.9896 12.3019C97.2668 11.412 97.6971 10.792 98.2806 10.4419C98.8788 10.0918 99.5936 9.91671 100.425 9.91671H101.125V12.4551H100.097C99.2799 12.4551 98.6235 12.7104 98.1275 13.2209C97.6315 13.7169 97.3835 14.4172 97.3835 15.3217V21.952H94.5169Z" fill="#20134B"/>
+        <path d="M106.312 22.2146C105.48 22.2146 104.758 22.076 104.146 21.7988C103.533 21.5217 103.059 21.1278 102.723 20.6172C102.388 20.092 102.22 19.4866 102.22 18.8009C102.22 18.1445 102.366 17.5609 102.658 17.0504C102.949 16.5252 103.402 16.0875 104.014 15.7374C104.627 15.3873 105.4 15.1393 106.334 14.9934L110.229 14.3588V16.5471L106.881 17.116C106.312 17.2181 105.889 17.4005 105.612 17.6631C105.335 17.9257 105.196 18.2685 105.196 18.6915C105.196 19.1 105.349 19.4282 105.656 19.6762C105.976 19.9097 106.37 20.0264 106.837 20.0264C107.435 20.0264 107.96 19.9024 108.413 19.6544C108.88 19.3918 109.237 19.0344 109.485 18.5821C109.748 18.1299 109.879 17.6339 109.879 17.0941V14.0306C109.879 13.52 109.675 13.0969 109.266 12.7614C108.872 12.4113 108.347 12.2362 107.691 12.2362C107.078 12.2362 106.531 12.404 106.049 12.7395C105.583 13.0605 105.24 13.4908 105.021 14.0306L102.68 12.8927C102.913 12.2654 103.278 11.7257 103.774 11.2734C104.284 10.8066 104.882 10.4419 105.568 10.1793C106.254 9.91671 106.998 9.78542 107.8 9.78542C108.777 9.78542 109.638 9.96777 110.382 10.3325C111.126 10.6826 111.702 11.1786 112.111 11.8205C112.534 12.4478 112.745 13.1845 112.745 14.0306V21.952H110.032V19.9169L110.645 19.8732C110.338 20.3838 109.974 20.8141 109.551 21.1642C109.128 21.4998 108.646 21.7624 108.106 21.952C107.567 22.1271 106.968 22.2146 106.312 22.2146Z" fill="#20134B"/>
+        <defs>
+          <clipPath id="nav-clip">
+            <rect width="36.7059" height="15.0588" fill="white" transform="translate(0 8.4707)"/>
+          </clipPath>
+        </defs>
+      </svg>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#passport">Passport</a></li>
+      <li><a href="#friends">Compare</a></li>
+      <li><a href="badges.html">Badges</a></li>
+      <li class="nav-theme-item">
+        <button class="nav-theme-btn" aria-label="Toggle dark mode" onclick="toggleTheme()">
+          <i class="ph-fill ph-moon icon-moon"></i>
+          <i class="ph-fill ph-sun icon-sun"></i>
+          <span class="nav-theme-lbl-dark">Switch to dark mode</span>
+          <span class="nav-theme-lbl-light">Switch to light mode</span>
+        </button>
+      </li>
+    </ul>
+    <a href="#download" class="btn btn-primary"><span class="nav-btn-full">Download Free</span><span class="nav-btn-short">Download</span></a>
+    <button class="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()">
+      <i class="ph-fill ph-moon icon-moon"></i>
+      <i class="ph-fill ph-sun icon-sun"></i>
+    </button>
+    <button class="nav-hamburger" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('open');document.querySelector('.nav-mobile-overlay').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-mobile-overlay" onclick="document.querySelector('.nav-links').classList.remove('open');this.classList.remove('open')"></div>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<section class="hero" id="top">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=2000&q=80" alt="Stunning turquoise ocean coastline aerial view" loading="eager" />
+  </div>
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Free on iOS &amp; Android
+    </div>
+    <h1>Colour in<br /><span>your world.</span></h1>
+    <p class="hero-sub">
+      Track everywhere you've been. See how much of the world is yours.
+    </p>
+    <div class="hero-cta">
+      <a href="#download" class="store-btn">
+        <span class="store-btn-icon">
+          <i class="ph-fill ph-apple-logo"></i>
+        </span>
+        <span class="store-btn-text">
+          <span class="store-btn-label">Download on the</span>
+          <span class="store-btn-name">App Store</span>
+        </span>
+      </a>
+      <a href="#download" class="store-btn">
+        <span class="store-btn-icon">
+          <i class="ph-fill ph-google-play-logo"></i>
+        </span>
+        <span class="store-btn-text">
+          <span class="store-btn-label">Get it on</span>
+          <span class="store-btn-name">Google Play</span>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Phone mockup -->
+  <div class="hero-phone-wrapper">
+    <div class="hero-phone">
+      <div class="hero-phone-notch"></div>
+      <div class="hero-phone-screen">
+        <div class="phone-map">
+          <img src="Earth.svg" alt="World map" style="width:92%; height:auto; opacity:.3; filter:brightness(2.5); position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);" />
+        </div>
+        <div class="phone-tab-bar">
+          <div class="phone-tab active">
+            <div class="phone-tab-icon">
+              <i class="ph-fill ph-globe-hemisphere-west"></i>
+            </div>
+            Map
+          </div>
+          <div class="phone-tab">
+            <div class="phone-tab-icon">
+              <i class="ph ph-identification-card"></i>
+            </div>
+            Passport
+          </div>
+          <div class="phone-tab">
+            <div class="phone-tab-icon">
+              <i class="ph-fill ph-paper-plane-tilt"></i>
+            </div>
+            Trips
+          </div>
+          <div class="phone-tab">
+            <div class="phone-tab-icon">
+              <i class="ph-fill ph-users-three"></i>
+            </div>
+            Friends
+          </div>
+          <div class="phone-tab">
+            <div class="phone-tab-icon">
+              <i class="ph ph-gear"></i>
+            </div>
+            Settings
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats bar -->
+<div class="hero-stats-bar">
+  <div class="hero-stats">
+    <div>
+      <div class="hero-stat-num" data-target="195">195</div>
+      <div class="hero-stat-label">Countries to collect</div>
+    </div>
+    <div class="hero-stat-divider"></div>
+    <div>
+      <div class="hero-stat-num" data-target="6">6</div>
+      <div class="hero-stat-label">Continents to explore</div>
+    </div>
+    <div class="hero-stat-divider"></div>
+    <div>
+      <div class="hero-stat-num">&infin;</div>
+      <div class="hero-stat-label">Stories to tell</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURES ──────────────────────────────────────────────── -->
+<section class="features" id="features">
+  <div class="section-inner">
+    <div class="features-header reveal">
+      <div class="section-tag">Features</div>
+      <h2>Every journey, beautifully tracked</h2>
+      <p class="section-desc">
+        From your first country to your 100th, Novara grows with you — turning every trip into a story worth sharing.
+      </p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card accent reveal">
+        <div class="feature-card-text">
+          <div class="feature-icon">
+            <i class="ph ph-globe-hemisphere-west" style="color: #F89874;"></i>
+          </div>
+          <h3>Interactive World Map</h3>
+          <p>Watch your personal world map fill with colour as you add countries, cities, and regions. Pinch, pan, zoom — it's your footprint at a glance.</p>
+          <span class="feature-tag">Countries &middot; Cities &middot; Regions</span>
+        </div>
+        <div class="feature-visual">
+          <div class="map-interactive" id="mapInteractive">
+            <div class="map-layer" id="mapLayer">
+              <svg id="mapSvg" class="map-svg-world" viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
+            <div class="map-hint"><i class="ph ph-arrows-out-cardinal"></i> Drag &amp; scroll to explore</div>
+          </div>
+        </div>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon">
+          <i class="ph ph-identification-card" style="color: #F56630;"></i>
+        </div>
+        <h3>Passport Stats</h3>
+        <p>Six stats that capture your entire travel life — from countries visited to your world percentage. Watching the numbers climb is half the fun.</p>
+        <span class="feature-tag">Based on 195 UN countries</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon">
+          <i class="ph ph-paper-plane-tilt" style="color: #F56630;"></i>
+        </div>
+        <h3>Trip Logging</h3>
+        <p>Log dates, cities, and durations. Build a timeline of your travels — not just a list of countries.</p>
+        <span class="feature-tag">Dates &middot; Duration &middot; Cities</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon">
+          <i class="ph ph-users-three" style="color: #F56630;"></i>
+        </div>
+        <h3>Friends &amp; Social</h3>
+        <p>A friend at 15% when you're at 1%? That's all the motivation you need. Add friends via link or code and watch the race unfold.</p>
+        <span class="feature-tag">Compare &middot; Invite &middot; Share</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ──────────────────────────────────────────── -->
+<section class="how" id="how-it-works">
+  <div class="section-inner">
+    <div class="how-header reveal">
+      <div class="section-tag">How it works</div>
+      <h2>Three steps to your world</h2>
+      <p class="section-desc">Getting started takes seconds. Filling in your map takes a lifetime.</p>
+    </div>
+    <div class="steps">
+      <svg class="steps-trail" viewBox="0 0 800 120">
+        <path d="M 0 58 C 30 58, 40 20, 80 18 C 120 16, 110 95, 160 90 C 210 85, 200 15, 250 20 C 300 25, 290 100, 340 92 C 390 84, 380 18, 400 58 C 420 98, 430 20, 470 22 C 510 24, 500 95, 550 88 C 600 81, 590 15, 640 20 C 690 25, 700 90, 750 80 C 780 74, 790 58, 800 58" />
+      </svg>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">1</div>
+        <h3>Add a country</h3>
+        <p>Search for a country, tap to add it. Your map fills with colour instantly.</p>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">2</div>
+        <h3>Watch your progress</h3>
+        <p>Your stats update in real time. Countries, cities, continents — all rising.</p>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">3</div>
+        <h3>Share your passport</h3>
+        <p>Share a beautiful snapshot of your travel stats. Let the world see how far you've come.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SPOTLIGHT: Passport Stats ──────────────────────────────── -->
+<section class="spotlight" id="passport">
+  <div class="spotlight-inner">
+    <div class="spotlight-content reveal">
+      <div class="section-tag">Passport</div>
+      <h2>Your travel<br/>scorecard.</h2>
+      <p>
+        One screen. Six numbers. Your entire travel life at a glance — always up to date.
+      </p>
+      <p>
+        Every new country nudges your numbers upward — and that feeling never gets old. Share your Passport with a single tap to show the world how far you've come.
+      </p>
+    </div>
+    <div class="spotlight-visual">
+      <div class="passport-mock">
+        <div class="passport-mock-header">
+          <div class="passport-mock-title">My Passport</div>
+          <div class="passport-mock-share">Share</div>
+        </div>
+        <div class="passport-stats-grid">
+          <div class="passport-stat">
+            <div class="passport-stat-num">7</div>
+            <div class="passport-stat-label">Trips</div>
+          </div>
+          <div class="passport-stat">
+            <div class="passport-stat-num accent">24</div>
+            <div class="passport-stat-label">Countries</div>
+          </div>
+          <div class="passport-stat">
+            <div class="passport-stat-num">41</div>
+            <div class="passport-stat-label">Cities</div>
+          </div>
+          <div class="passport-stat">
+            <div class="passport-stat-num">5</div>
+            <div class="passport-stat-label">Continents</div>
+          </div>
+          <div class="passport-stat">
+            <div class="passport-stat-num accent">12%</div>
+            <div class="passport-stat-label">World</div>
+          </div>
+          <div class="passport-stat">
+            <div class="passport-stat-num">86</div>
+            <div class="passport-stat-label">Days</div>
+          </div>
+        </div>
+        <div class="passport-countries">
+          <div class="passport-countries-title">Visited Countries</div>
+          <div class="passport-flags">
+            <div class="passport-flag"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#pf-ng)"><path d="M20 40C31.0457 40 40 31.0457 40 20C40 8.9543 31.0457 0 20 0C8.9543 0 0 8.9543 0 20C0 31.0457 8.9543 40 20 40Z" fill="#F0F0F0"/><path d="M0 20C0 28.5994 5.4275 35.9302 13.0435 38.7561V1.24408C5.4275 4.06986 0 11.4008 0 20Z" fill="#6DA544"/><path d="M40.0001 20C40.0001 11.4008 34.5726 4.06986 26.9565 1.24408V38.7562C34.5726 35.9302 40.0001 28.5994 40.0001 20Z" fill="#6DA544"/></g><defs><clipPath id="pf-ng"><rect width="40" height="40" fill="white"/></clipPath></defs></svg></div>
+            <div class="passport-flag"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#pf-gb)"><path d="M20 40C31.0457 40 40 31.0457 40 20C40 8.9543 31.0457 0 20 0C8.9543 0 0 8.9543 0 20C0 31.0457 8.9543 40 20 40Z" fill="#F0F0F0"/><path d="M4.13436 7.82361C2.56334 9.86759 1.37873 12.2235 0.688965 14.7827H11.0935L4.13436 7.82361Z" fill="#0052B4"/><path d="M39.3111 14.7827C38.6213 12.2235 37.4367 9.86759 35.8657 7.82361L28.9067 14.7827H39.3111Z" fill="#0052B4"/><path d="M0.688965 25.2175C1.37881 27.7767 2.56342 30.1326 4.13436 32.1765L11.0933 25.2175H0.688965Z" fill="#0052B4"/><path d="M32.1763 4.13443C30.1324 2.56342 27.7766 1.37881 25.2173 0.688965V11.0934L32.1763 4.13443Z" fill="#0052B4"/><path d="M7.82373 35.8655C9.86771 37.4365 12.2236 38.6211 14.7828 39.311V28.9066L7.82373 35.8655Z" fill="#0052B4"/><path d="M14.7827 0.688965C12.2235 1.37881 9.86764 2.56342 7.82373 4.13436L14.7827 11.0933V0.688965Z" fill="#0052B4"/><path d="M25.2173 39.311C27.7765 38.6211 30.1324 37.4365 32.1763 35.8656L25.2173 28.9066V39.311Z" fill="#0052B4"/><path d="M28.9067 25.2175L35.8657 32.1766C37.4367 30.1327 38.6213 27.7767 39.3111 25.2175H28.9067Z" fill="#0052B4"/><path d="M39.8307 17.3913H22.6088V0.169297C21.7548 0.058125 20.8841 0 20 0C19.1157 0 18.2452 0.058125 17.3913 0.169297V17.3913H0.169297C0.058125 18.2452 0 19.1159 0 20C0 20.8843 0.058125 21.7548 0.169297 22.6087H17.3913V39.8307C18.2452 39.9419 19.1157 40 20 40C20.8841 40 21.7548 39.942 22.6087 39.8307V22.6087H39.8307C39.9419 21.7548 40 20.8843 40 20C40 19.1159 39.9419 18.2452 39.8307 17.3913Z" fill="#D80027"/><path d="M25.2173 25.2175L34.142 34.1422C34.5524 33.7319 34.944 33.3029 35.3176 32.8582L27.6768 25.2174H25.2173Z" fill="#D80027"/><path d="M14.7827 25.2175H14.7825L5.85791 34.1421C6.26822 34.5526 6.69721 34.9442 7.14189 35.3178L14.7827 27.6768V25.2175Z" fill="#D80027"/><path d="M14.7824 14.7827V14.7826L5.85775 5.85779C5.44729 6.2681 5.05572 6.69708 4.68213 7.14177L12.323 14.7826H14.7824Z" fill="#D80027"/><path d="M25.2173 14.7828L34.1421 5.85792C33.7317 5.44745 33.3028 5.05589 32.8581 4.68237L25.2173 12.3232V14.7828Z" fill="#D80027"/></g><defs><clipPath id="pf-gb"><rect width="40" height="40" fill="white"/></clipPath></defs></svg></div>
+            <div class="passport-flag"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#pf-jp)"><path d="M20 40C31.0457 40 40 31.0457 40 20C40 8.9543 31.0457 0 20 0C8.9543 0 0 8.9543 0 20C0 31.0457 8.9543 40 20 40Z" fill="#F0F0F0"/><path d="M19.9998 28.6956C24.8023 28.6956 28.6954 24.8024 28.6954 19.9999C28.6954 15.1975 24.8023 11.3043 19.9998 11.3043C15.1974 11.3043 11.3042 15.1975 11.3042 19.9999C11.3042 24.8024 15.1974 28.6956 19.9998 28.6956Z" fill="#D80027"/></g><defs><clipPath id="pf-jp"><rect width="40" height="40" fill="white"/></clipPath></defs></svg></div>
+            <div class="passport-flag"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#pf-br)"><path d="M20 40C31.0457 40 40 31.0457 40 20C40 8.9543 31.0457 0 20 0C8.9543 0 0 8.9543 0 20C0 31.0457 8.9543 40 20 40Z" fill="#6DA544"/><path d="M20 7.82611L36.5217 20L20 32.1739L3.47827 20L20 7.82611Z" fill="#FFDA44"/><path d="M19.9999 26.9565C23.8419 26.9565 26.9564 23.842 26.9564 20C26.9564 16.158 23.8419 13.0435 19.9999 13.0435C16.158 13.0435 13.0435 16.158 13.0435 20C13.0435 23.842 16.158 26.9565 19.9999 26.9565Z" fill="#F0F0F0"/><path d="M16.5217 19.5652C15.312 19.5652 14.1446 19.7492 13.0457 20.0906C13.0943 23.8906 16.1884 26.9566 20 26.9566C22.3568 26.9566 24.4384 25.7834 25.6967 23.9903C23.5439 21.2952 20.2313 19.5652 16.5217 19.5652Z" fill="#0052B4"/><path d="M26.8276 21.3328C26.9113 20.9013 26.9566 20.456 26.9566 20C26.9566 16.158 23.842 13.0435 20.0001 13.0435C17.1334 13.0435 14.6724 14.778 13.6074 17.2544C14.5488 17.0593 15.5235 16.9566 16.5219 16.9566C20.5623 16.9565 24.2174 18.636 26.8276 21.3328Z" fill="#0052B4"/></g><defs><clipPath id="pf-br"><rect width="40" height="40" fill="white"/></clipPath></defs></svg></div>
+            <div class="passport-flag"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#pf-es)"><path d="M0 19.9999C0 22.4464 0.440078 24.7898 1.24398 26.9564L20 28.6956L38.756 26.9564C39.5599 24.7898 40 22.4464 40 19.9999C40 17.5535 39.5599 15.2101 38.756 13.0435L20 11.3043L1.24398 13.0435C0.440078 15.2101 0 17.5535 0 19.9999Z" fill="#FFDA44"/><path d="M38.7562 13.0435C35.9303 5.42758 28.5995 0 20.0002 0C11.4009 0 4.07 5.42758 1.24414 13.0435H38.7562Z" fill="#D80027"/><path d="M1.24414 26.9565C4.07 34.5725 11.4009 40.0001 20.0002 40.0001C28.5995 40.0001 35.9303 34.5725 38.7562 26.9565H1.24414Z" fill="#D80027"/></g><defs><clipPath id="pf-es"><rect width="40" height="40" fill="white"/></clipPath></defs></svg></div>
+            <div class="passport-flag"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#pf-it)"><path d="M20 40C31.0457 40 40 31.0457 40 20C40 8.9543 31.0457 0 20 0C8.9543 0 0 8.9543 0 20C0 31.0457 8.9543 40 20 40Z" fill="#F0F0F0"/><path d="M40.0001 20C40.0001 11.4007 34.5726 4.06988 26.9565 1.24402V38.7561C34.5726 35.9302 40.0001 28.5993 40.0001 20Z" fill="#D80027"/><path d="M0 20C0 28.5993 5.4275 35.9302 13.0435 38.7561V1.24402C5.4275 4.06988 0 11.4007 0 20Z" fill="#6DA544"/></g><defs><clipPath id="pf-it"><rect width="40" height="40" fill="white"/></clipPath></defs></svg></div>
+            <div class="passport-flag"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#pf-sa)"><path d="M20 40C31.0457 40 40 31.0457 40 20C40 8.9543 31.0457 0 20 0C8.9543 0 0 8.9543 0 20C0 31.0457 8.9543 40 20 40Z" fill="#6DA544"/><path d="M11.3047 23.9131C11.3047 25.3538 12.4727 26.5218 13.9134 26.5218H21.7395C21.7395 27.7224 22.7127 28.6957 23.9134 28.6957H26.522C27.7227 28.6957 28.6959 27.7224 28.6959 26.5218V23.9131H11.3047Z" fill="#F0F0F0"/><path d="M28.9135 11.3044V17.3914C28.9135 18.3504 28.1333 19.1305 27.1743 19.1305V21.7392C29.5717 21.7392 31.5221 19.7887 31.5221 17.3914V11.3044H28.9135Z" fill="#F0F0F0"/><path d="M10.2177 17.3914C10.2177 18.3504 9.4375 19.1305 8.47852 19.1305V21.7392C10.8759 21.7392 12.8263 19.7887 12.8263 17.3914V11.3044H10.2177V17.3914Z" fill="#F0F0F0"/><path d="M25 11.3044H27.6087V17.3914H25V11.3044Z" fill="#F0F0F0"/><path d="M21.0873 14.7826C21.0873 15.0224 20.8923 15.2174 20.6526 15.2174C20.4129 15.2174 20.2178 15.0223 20.2178 14.7826V11.3043H17.6091V14.7826C17.6091 15.0224 17.4141 15.2174 17.1744 15.2174C16.9347 15.2174 16.7396 15.0223 16.7396 14.7826V11.3043H14.1309V14.7826C14.1309 16.4608 15.4962 17.8261 17.1744 17.8261C17.8207 17.8261 18.4201 17.623 18.9135 17.278C19.4069 17.6229 20.0063 17.8261 20.6527 17.8261C20.7828 17.8261 20.9108 17.817 21.0366 17.801C20.8518 18.5626 20.1659 19.1304 19.3483 19.1304V21.7391C21.7457 21.7391 23.6961 19.7886 23.6961 17.3913V14.7826V11.3043H21.0874V14.7826H21.0873Z" fill="#F0F0F0"/><path d="M14.1309 19.1305H18.0439V21.7392H14.1309V19.1305Z" fill="#F0F0F0"/></g><defs><clipPath id="pf-sa"><rect width="40" height="40" fill="white"/></clipPath></defs></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SPOTLIGHT: Regions & Borders ───────────────────────────── -->
+<section class="spotlight" id="regions" style="background: var(--grey-50);">
+  <div class="spotlight-inner reverse">
+    <div class="spotlight-content reveal">
+      <div class="section-tag">Regions &amp; Borders</div>
+      <h2>Your rules,<br/>your map.</h2>
+      <p>
+        Traveller communities have strong opinions about disputed territories and continent models. So we let you decide.
+      </p>
+      <p>
+        Break the UK into England, Scotland, Wales &amp; Northern Ireland. Decide how places like Western Sahara or Kosovo appear. Choose between 6 or 7 continent models. Novara reflects the world as <em>you</em> see it.
+      </p>
+    </div>
+    <div class="spotlight-visual">
+      <div class="region-cards">
+        <div class="region-card">
+          <div class="region-card-left">
+            <div class="region-card-flag"><i class="ph ph-flag-banner" style="color: var(--orange);"></i></div>
+            <div class="region-card-info">
+              <strong>Split UK</strong>
+              <span>England, Scotland, Wales, N. Ireland</span>
+            </div>
+          </div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="region-card">
+          <div class="region-card-left">
+            <div class="region-card-flag"><i class="ph ph-shield-warning" style="color: var(--orange);"></i></div>
+            <div class="region-card-info">
+              <strong>Disputed Territories</strong>
+              <span>Show contested regions</span>
+            </div>
+          </div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="region-card">
+          <div class="region-card-left">
+            <div class="region-card-flag"><i class="ph ph-globe-hemisphere-west" style="color: var(--orange);"></i></div>
+            <div class="region-card-info">
+              <strong>Continent Model</strong>
+              <span>7 continents</span>
+            </div>
+          </div>
+          <div class="toggle off"></div>
+        </div>
+        <div class="region-card">
+          <div class="region-card-left">
+            <div class="region-card-flag"><i class="ph ph-map-trifold" style="color: var(--orange);"></i></div>
+            <div class="region-card-info">
+              <strong>Regions View</strong>
+              <span>Sub-national states &amp; regions</span>
+            </div>
+          </div>
+          <div class="toggle on"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SPOTLIGHT: Friends ─────────────────────────────────────── -->
+<section class="spotlight" id="friends">
+  <div class="spotlight-inner">
+    <div class="spotlight-content reveal">
+      <div class="section-tag">Social</div>
+      <h2>Race your friends<br/>around the world.</h2>
+      <p>
+        Nothing motivates like a little rivalry. Novara's Friends tab turns friendly competition into the fuel for your next adventure.
+      </p>
+      <p>
+        Add friends by sharing a link or entering their unique code. Compare maps, countries, and continents — then let the race begin.
+      </p>
+    </div>
+    <div class="spotlight-visual">
+      <div class="friends-list">
+        <div class="friend-card">
+          <img class="friend-avatar" src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&h=80&fit=crop&crop=face" alt="Moyo Oladinni" />
+          <div class="friend-meta">
+            <strong>Moyo Oladinni</strong>
+            <div class="friend-bar"><div class="friend-bar-fill" style="width:42%"></div></div>
+          </div>
+          <div class="friend-pct">42%</div>
+        </div>
+        <div class="friend-card">
+          <img class="friend-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face" alt="Lena Müller" />
+          <div class="friend-meta">
+            <strong>Lena M&uuml;ller</strong>
+            <div class="friend-bar"><div class="friend-bar-fill" style="width:31%"></div></div>
+          </div>
+          <div class="friend-pct">31%</div>
+        </div>
+        <div class="friend-card" style="border-color: var(--orange); box-shadow: 0 0 0 2px rgba(245,102,48,.15);">
+          <div class="friend-avatar friend-avatar-you">Y</div>
+          <div class="friend-meta">
+            <strong>You</strong>
+            <div class="friend-bar"><div class="friend-bar-fill" style="width:12%"></div></div>
+          </div>
+          <div class="friend-pct">12%</div>
+        </div>
+        <div class="friend-card">
+          <img class="friend-avatar" src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face" alt="Kwame Asante" />
+          <div class="friend-meta">
+            <strong>Kwame Asante</strong>
+            <div class="friend-bar"><div class="friend-bar-fill" style="width:8%"></div></div>
+          </div>
+          <div class="friend-pct">8%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BADGES & REWARDS ─────────────────────────────────── -->
+<section id="badges">
+  <div class="section-inner">
+    <div class="badges-header reveal">
+      <div class="section-tag">Achievements</div>
+      <h2>Earn badges &amp; rewards</h2>
+      <p class="section-desc">Hit a milestone, unlock a badge. Every adventure brings you closer to something special.</p>
+    </div>
+
+    <div class="badges-showcase">
+      <div class="badge-card reveal reveal-delay-1">
+        <div class="badge-frame">
+          <img src="Achievement Badges/hot-air-baloon.svg" alt="Up &amp; Away" class="badge-img" />
+        </div>
+        <h4 class="badge-name">Up &amp; Away</h4>
+        <p class="badge-hint">Log your first trip</p>
+      </div>
+      <div class="badge-card reveal reveal-delay-2">
+        <div class="badge-frame">
+          <img src="Achievement Badges/earth.svg" alt="World Citizen" class="badge-img" />
+        </div>
+        <h4 class="badge-name">World Citizen</h4>
+        <p class="badge-hint">Visit 50+ countries</p>
+      </div>
+      <div class="badge-card reveal reveal-delay-3">
+        <div class="badge-frame">
+          <img src="Achievement Badges/luggage.svg" alt="Frequent Flyer" class="badge-img" />
+        </div>
+        <h4 class="badge-name">Frequent Flyer</h4>
+        <p class="badge-hint">Log 25 trips</p>
+      </div>
+      <div class="badge-card reveal reveal-delay-1">
+        <div class="badge-frame">
+          <img src="Achievement Badges/map.svg" alt="Cartographer" class="badge-img" />
+        </div>
+        <h4 class="badge-name">Cartographer</h4>
+        <p class="badge-hint">Fill 25% of the world map</p>
+      </div>
+      <div class="badge-card reveal reveal-delay-2">
+        <div class="badge-frame">
+          <img src="Achievement Badges/rainbow-clouds.svg" alt="Rainbow Collector" class="badge-img" />
+        </div>
+        <h4 class="badge-name">Rainbow Collector</h4>
+        <p class="badge-hint">Visit 5 continents</p>
+      </div>
+      <div class="badge-card reveal reveal-delay-3">
+        <div class="badge-frame">
+          <img src="Achievement Badges/van.svg" alt="Road Warrior" class="badge-img" />
+        </div>
+        <h4 class="badge-name">Road Warrior</h4>
+        <p class="badge-hint">Road trip through 3+ countries</p>
+      </div>
+      <div class="badge-card reveal reveal-delay-1">
+        <div class="badge-frame">
+          <img src="Achievement Badges/sunset.svg" alt="Golden Hour" class="badge-img" />
+        </div>
+        <h4 class="badge-name">Golden Hour</h4>
+        <p class="badge-hint">Visit 3 continents</p>
+      </div>
+      <div class="badge-card reveal reveal-delay-2">
+        <div class="badge-frame">
+          <img src="Achievement Badges/mountain-road.svg" alt="Summit Seeker" class="badge-img" />
+        </div>
+        <h4 class="badge-name">Summit Seeker</h4>
+        <p class="badge-hint">Visit 3 mountainous countries</p>
+      </div>
+    </div>
+
+    <div class="badges-cta reveal">
+      <a href="badges.html" class="btn btn-secondary">View all 20 badges <i class="ph ph-arrow-right"></i></a>
+      <p class="badges-cta-note">Each badge unlocks an exclusive in-app reward</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── TARGET USERS / PERSONAS ────────────────────────────────── -->
+<section class="personas" id="who">
+  <div class="section-inner">
+    <div class="personas-header reveal">
+      <div class="section-tag">Built for travellers</div>
+      <h2>Whether you've been to 2 countries or 50</h2>
+      <p class="section-desc">Novara makes every country feel like a milestone — whether it's your second or your fiftieth.</p>
+    </div>
+    <div class="personas-grid">
+      <div class="persona-card persona-collector reveal reveal-delay-1">
+        <div class="persona-icon">
+          <i class="ph-fill ph-globe-hemisphere-west"></i>
+        </div>
+        <p class="persona-quote">"Just one more country..."</p>
+        <h3>The Collector</h3>
+        <p>Motivated by the percentage counter and the visual satisfaction of filling in the map. Every new country is a dopamine hit.</p>
+      </div>
+      <div class="persona-card persona-logger reveal reveal-delay-2">
+        <div class="persona-icon">
+          <i class="ph-fill ph-paper-plane-tilt"></i>
+        </div>
+        <p class="persona-quote">"Where did I go last summer?"</p>
+        <h3>The Casual Logger</h3>
+        <p>Wants a low-friction record of where they've been, without full trip management overhead. Just colour in the map and go.</p>
+      </div>
+      <div class="persona-card persona-comparer reveal reveal-delay-3">
+        <div class="persona-icon">
+          <i class="ph-fill ph-users-three"></i>
+        </div>
+        <p class="persona-quote">"I need to catch up to Sarah."</p>
+        <h3>The Social Comparer</h3>
+        <p>Enjoys seeing how their progress stacks up against friends. The leaderboard is the motivation to book the next flight.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA SECTION ───────────────────────────────────────────── -->
+<section class="cta-section" id="download">
+  <!-- World map background -->
+  <div class="cta-map-bg">
+    <img src="Earth.svg" alt="" aria-hidden="true" />
+  </div>
+  <!-- Animated flight paths -->
+  <div class="cta-flights">
+    <svg viewBox="0 0 744 371" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Flight 1: London to New York -->
+      <path class="flight-path" d="M340 120 Q250 60 160 130" stroke-dasharray="300" />
+      <!-- Flight 2: Dubai to Tokyo -->
+      <path class="flight-path" d="M440 170 Q520 100 600 120" stroke-dasharray="300" />
+      <!-- Flight 3: New York to Lagos -->
+      <path class="flight-path" d="M160 130 Q250 200 360 230" stroke-dasharray="300" />
+      <!-- Flight 4: London to Cape Town -->
+      <path class="flight-path" d="M340 120 Q370 200 390 300" stroke-dasharray="300" />
+      <!-- Flight 5: Sydney to Singapore -->
+      <path class="flight-path" d="M640 310 Q590 250 560 200" stroke-dasharray="300" />
+      <!-- Endpoint dots -->
+      <circle class="flight-dot" cx="340" cy="120" r="3" /><!-- London -->
+      <circle class="flight-dot" cx="160" cy="130" r="3" /><!-- New York -->
+      <circle class="flight-dot" cx="440" cy="170" r="3" /><!-- Dubai -->
+      <circle class="flight-dot" cx="600" cy="120" r="3" /><!-- Tokyo -->
+      <circle class="flight-dot" cx="360" cy="230" r="3" /><!-- Lagos -->
+      <circle class="flight-dot" cx="390" cy="300" r="3" /><!-- Cape Town -->
+      <circle class="flight-dot" cx="640" cy="310" r="3" /><!-- Sydney -->
+      <circle class="flight-dot" cx="560" cy="200" r="3" /><!-- Singapore -->
+      <circle class="flight-dot" cx="160" cy="130" r="3" /><!-- NY (for flight 3) -->
+      <circle class="flight-dot" cx="340" cy="120" r="3" /><!-- London (for flight 4) -->
+    </svg>
+  </div>
+  <div class="cta-inner">
+    <!-- White Logo -->
+    <div style="margin-bottom: 40px; display: flex; justify-content: center;">
+      <svg width="122" height="32" viewBox="0 0 122 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#cta-clip)">
+          <path d="M26.117 8.4707H36.4699L27.5287 23.5295H17.1758L26.117 8.4707Z" fill="white"/>
+          <path d="M16.7068 8.4707H24.2362L15.295 23.5295H7.76562L16.7068 8.4707Z" fill="white"/>
+          <path d="M9.17555 8.4707H14.8226L5.88143 23.5295H0.234375L9.17555 8.4707Z" fill="white"/>
+        </g>
+        <path d="M42.8241 21.952V10.048H45.5156V12.3894L45.2968 11.9736C45.574 11.2588 46.0262 10.719 46.6535 10.3543C47.2954 9.97505 48.0394 9.7854 48.8855 9.7854C49.7608 9.7854 50.534 9.97505 51.205 10.3543C51.8907 10.7336 52.4232 11.2661 52.8024 11.9518C53.1817 12.6228 53.3714 13.4033 53.3714 14.2932V21.952H50.5048V14.9715C50.5048 14.4463 50.4027 13.9941 50.1985 13.6148C49.9942 13.2355 49.7097 12.9438 49.345 12.7395C48.9949 12.5207 48.5792 12.4113 48.0977 12.4113C47.6309 12.4113 47.2152 12.5207 46.8504 12.7395C46.4857 12.9438 46.2013 13.2355 45.997 13.6148C45.7928 13.9941 45.6907 14.4463 45.6907 14.9715V21.952H42.8241Z" fill="white"/>
+        <path d="M61.6161 22.2146C60.449 22.2146 59.3841 21.9447 58.4213 21.4049C57.473 20.8652 56.7144 20.1285 56.1455 19.1948C55.5911 18.2612 55.314 17.1962 55.314 16C55.314 14.8038 55.5911 13.7388 56.1455 12.8052C56.7144 11.8715 57.473 11.1348 58.4213 10.595C59.3695 10.0553 60.4344 9.7854 61.6161 9.7854C62.7831 9.7854 63.8408 10.0553 64.789 10.595C65.7373 11.1348 66.4886 11.8715 67.0429 12.8052C67.6118 13.7242 67.8963 14.7892 67.8963 16C67.8963 17.1962 67.6118 18.2612 67.0429 19.1948C66.474 20.1285 65.7154 20.8652 64.7671 21.4049C63.8189 21.9447 62.7686 22.2146 61.6161 22.2146ZM61.6161 19.5887C62.258 19.5887 62.8196 19.4355 63.301 19.1292C63.797 18.8228 64.1836 18.3998 64.4608 17.86C64.7526 17.3056 64.8984 16.6856 64.8984 16C64.8984 15.2998 64.7526 14.687 64.4608 14.1619C64.1836 13.6221 63.797 13.199 63.301 12.8927C62.8196 12.5718 62.258 12.4113 61.6161 12.4113C60.9596 12.4113 60.3834 12.5718 59.8874 12.8927C59.3914 13.199 58.9975 13.6221 58.7057 14.1619C58.4286 14.687 58.29 15.2998 58.29 16C58.29 16.6856 58.4286 17.3056 58.7057 17.86C58.9975 18.3998 59.3914 18.8228 59.8874 19.1292C60.3834 19.4355 60.9596 19.5887 61.6161 19.5887Z" fill="white"/>
+        <path d="M73.4452 21.952L68.7624 10.048H71.8916L75.2833 19.4136H74.1236L77.5372 10.048H80.6664L75.9836 21.952H73.4452Z" fill="white"/>
+        <path d="M85.434 22.2146C84.6025 22.2146 83.8803 22.076 83.2676 21.7988C82.6549 21.5216 82.1808 21.1278 81.8453 20.6172C81.5098 20.092 81.342 19.4866 81.342 18.8009C81.342 18.1445 81.4879 17.5609 81.7796 17.0503C82.0714 16.5252 82.5236 16.0875 83.1363 15.7374C83.7491 15.3873 84.5222 15.1393 85.4559 14.9934L89.3509 14.3588V16.547L86.0029 17.116C85.434 17.2181 85.0109 17.4005 84.7338 17.663C84.4566 17.9256 84.318 18.2685 84.318 18.6915C84.318 19.1 84.4712 19.4282 84.7775 19.6762C85.0985 19.9096 85.4923 20.0263 85.9592 20.0263C86.5573 20.0263 87.0825 19.9023 87.5347 19.6543C88.0015 19.3918 88.3589 19.0343 88.6069 18.5821C88.8695 18.1299 89.0008 17.6339 89.0008 17.0941V14.0306C89.0008 13.52 88.7966 13.0969 88.3881 12.7614C87.9942 12.4113 87.4691 12.2362 86.8126 12.2362C86.1999 12.2362 85.6528 12.404 85.1714 12.7395C84.7046 13.0605 84.3618 13.4908 84.1429 14.0306L81.8015 12.8927C82.0349 12.2654 82.3996 11.7256 82.8956 11.2734C83.4062 10.8066 84.0043 10.4419 84.69 10.1793C85.3756 9.91669 86.1196 9.7854 86.922 9.7854C87.8994 9.7854 88.7601 9.96775 89.5041 10.3325C90.2481 10.6826 90.8244 11.1786 91.2328 11.8205C91.6559 12.4478 91.8674 13.1845 91.8674 14.0306V21.952H89.154V19.9169L89.7667 19.8732C89.4603 20.3838 89.0956 20.8141 88.6726 21.1642C88.2495 21.4998 87.7681 21.7623 87.2284 21.952C86.6886 22.127 86.0905 22.2146 85.434 22.2146Z" fill="white"/>
+        <path d="M94.5169 21.952V10.048H97.2084V12.6958L96.9896 12.3019C97.2668 11.412 97.6971 10.792 98.2806 10.4419C98.8788 10.0918 99.5936 9.9167 100.425 9.9167H101.125V12.455H100.097C99.2799 12.455 98.6235 12.7103 98.1275 13.2209C97.6315 13.7169 97.3835 14.4172 97.3835 15.3216V21.952H94.5169Z" fill="white"/>
+        <path d="M106.312 22.2146C105.48 22.2146 104.758 22.076 104.146 21.7988C103.533 21.5216 103.059 21.1278 102.723 20.6172C102.388 20.092 102.22 19.4866 102.22 18.8009C102.22 18.1445 102.366 17.5609 102.658 17.0503C102.949 16.5252 103.402 16.0875 104.014 15.7374C104.627 15.3873 105.4 15.1393 106.334 14.9934L110.229 14.3588V16.547L106.881 17.116C106.312 17.2181 105.889 17.4005 105.612 17.663C105.335 17.9256 105.196 18.2685 105.196 18.6915C105.196 19.1 105.349 19.4282 105.656 19.6762C105.976 19.9096 106.37 20.0263 106.837 20.0263C107.435 20.0263 107.96 19.9023 108.413 19.6543C108.88 19.3918 109.237 19.0343 109.485 18.5821C109.748 18.1299 109.879 17.6339 109.879 17.0941V14.0306C109.879 13.52 109.675 13.0969 109.266 12.7614C108.872 12.4113 108.347 12.2362 107.691 12.2362C107.078 12.2362 106.531 12.404 106.049 12.7395C105.583 13.0605 105.24 13.4908 105.021 14.0306L102.68 12.8927C102.913 12.2654 103.278 11.7256 103.774 11.2734C104.284 10.8066 104.882 10.4419 105.568 10.1793C106.254 9.91669 106.998 9.7854 107.8 9.7854C108.777 9.7854 109.638 9.96775 110.382 10.3325C111.126 10.6826 111.702 11.1786 112.111 11.8205C112.534 12.4478 112.745 13.1845 112.745 14.0306V21.952H110.032V19.9169L110.645 19.8732C110.338 20.3838 109.974 20.8141 109.551 21.1642C109.128 21.4998 108.646 21.7623 108.106 21.952C107.567 22.127 106.968 22.2146 106.312 22.2146Z" fill="white"/>
+        <defs>
+          <clipPath id="cta-clip">
+            <rect width="36.7059" height="15.0588" fill="white" transform="translate(0 8.4707)"/>
+          </clipPath>
+        </defs>
+      </svg>
+    </div>
+    <h2>Your map is waiting.</h2>
+    <p>100% free. No account needed. Start colouring in the world that's already yours.</p>
+    <div class="cta-buttons">
+      <a href="#" class="btn btn-primary" style="font-size: 16px; padding: 16px 32px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09999 22C7.78999 22.05 6.79999 20.68 5.95999 19.47C4.24999 17 2.93999 12.45 4.69999 9.39C5.56999 7.87 7.12999 6.91 8.81999 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="white"/></svg>
+        App Store
+      </a>
+      <a href="#" class="btn btn-outline" style="font-size: 16px; padding: 14px 32px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3.18 23.76C3.39 23.91 3.64 24 3.92 24C4.16 24 4.39 23.93 4.59 23.8L17.09 16.85L13.37 13.13L3.18 23.76Z" fill="white"/><path d="M20.65 9.73L18.06 8.28L14.05 12L18.08 16.03L20.66 14.57C21.41 14.14 21.87 13.38 21.87 12.15C21.87 10.92 21.4 10.15 20.65 9.73Z" fill="white"/><path d="M2.36 0.7C2.13 0.97 2 1.36 2 1.86V22.14C2 22.64 2.13 23.03 2.36 23.3L2.44 23.37L13.1 12.71V12.44V12.29L2.44 0.63L2.36 0.7Z" fill="white"/><path d="M17.09 7.15L4.59 0.2C4.39 0.07 4.16 0 3.92 0C3.64 0 3.39 0.09 3.18 0.24L13.37 10.87L17.09 7.15Z" fill="white"/></svg>
+        Google Play
+      </a>
+    </div>
+    <p style="font-size: 13px; color: rgba(255,255,255,.35); margin: 0;">No account required to get started. Works offline.</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <!-- White Logo -->
+        <svg width="100" height="26" viewBox="0 0 122 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#ft-clip)">
+            <path d="M26.117 8.4707H36.4699L27.5287 23.5295H17.1758L26.117 8.4707Z" fill="white"/>
+            <path d="M16.7068 8.4707H24.2362L15.295 23.5295H7.76562L16.7068 8.4707Z" fill="white"/>
+            <path d="M9.17555 8.4707H14.8226L5.88143 23.5295H0.234375L9.17555 8.4707Z" fill="white"/>
+          </g>
+          <path d="M42.8241 21.952V10.048H45.5156V12.3894L45.2968 11.9736C45.574 11.2588 46.0262 10.719 46.6535 10.3543C47.2954 9.97505 48.0394 9.7854 48.8855 9.7854C49.7608 9.7854 50.534 9.97505 51.205 10.3543C51.8907 10.7336 52.4232 11.2661 52.8024 11.9518C53.1817 12.6228 53.3714 13.4033 53.3714 14.2932V21.952H50.5048V14.9715C50.5048 14.4463 50.4027 13.9941 50.1985 13.6148C49.9942 13.2355 49.7097 12.9438 49.345 12.7395C48.9949 12.5207 48.5792 12.4113 48.0977 12.4113C47.6309 12.4113 47.2152 12.5207 46.8504 12.7395C46.4857 12.9438 46.2013 13.2355 45.997 13.6148C45.7928 13.9941 45.6907 14.4463 45.6907 14.9715V21.952H42.8241Z" fill="white"/>
+          <path d="M61.6161 22.2146C60.449 22.2146 59.3841 21.9447 58.4213 21.4049C57.473 20.8652 56.7144 20.1285 56.1455 19.1948C55.5911 18.2612 55.314 17.1962 55.314 16C55.314 14.8038 55.5911 13.7388 56.1455 12.8052C56.7144 11.8715 57.473 11.1348 58.4213 10.595C59.3695 10.0553 60.4344 9.7854 61.6161 9.7854C62.7831 9.7854 63.8408 10.0553 64.789 10.595C65.7373 11.1348 66.4886 11.8715 67.0429 12.8052C67.6118 13.7242 67.8963 14.7892 67.8963 16C67.8963 17.1962 67.6118 18.2612 67.0429 19.1948C66.474 20.1285 65.7154 20.8652 64.7671 21.4049C63.8189 21.9447 62.7686 22.2146 61.6161 22.2146ZM61.6161 19.5887C62.258 19.5887 62.8196 19.4355 63.301 19.1292C63.797 18.8228 64.1836 18.3998 64.4608 17.86C64.7526 17.3056 64.8984 16.6856 64.8984 16C64.8984 15.2998 64.7526 14.687 64.4608 14.1619C64.1836 13.6221 63.797 13.199 63.301 12.8927C62.8196 12.5718 62.258 12.4113 61.6161 12.4113C60.9596 12.4113 60.3834 12.5718 59.8874 12.8927C59.3914 13.199 58.9975 13.6221 58.7057 14.1619C58.4286 14.687 58.29 15.2998 58.29 16C58.29 16.6856 58.4286 17.3056 58.7057 17.86C58.9975 18.3998 59.3914 18.8228 59.8874 19.1292C60.3834 19.4355 60.9596 19.5887 61.6161 19.5887Z" fill="white"/>
+          <path d="M73.4452 21.952L68.7624 10.048H71.8916L75.2833 19.4136H74.1236L77.5372 10.048H80.6664L75.9836 21.952H73.4452Z" fill="white"/>
+          <path d="M85.434 22.2146C84.6025 22.2146 83.8803 22.076 83.2676 21.7988C82.6549 21.5216 82.1808 21.1278 81.8453 20.6172C81.5098 20.092 81.342 19.4866 81.342 18.8009C81.342 18.1445 81.4879 17.5609 81.7796 17.0503C82.0714 16.5252 82.5236 16.0875 83.1363 15.7374C83.7491 15.3873 84.5222 15.1393 85.4559 14.9934L89.3509 14.3588V16.547L86.0029 17.116C85.434 17.2181 85.0109 17.4005 84.7338 17.663C84.4566 17.9256 84.318 18.2685 84.318 18.6915C84.318 19.1 84.4712 19.4282 84.7775 19.6762C85.0985 19.9096 85.4923 20.0263 85.9592 20.0263C86.5573 20.0263 87.0825 19.9023 87.5347 19.6543C88.0015 19.3918 88.3589 19.0343 88.6069 18.5821C88.8695 18.1299 89.0008 17.6339 89.0008 17.0941V14.0306C89.0008 13.52 88.7966 13.0969 88.3881 12.7614C87.9942 12.4113 87.4691 12.2362 86.8126 12.2362C86.1999 12.2362 85.6528 12.404 85.1714 12.7395C84.7046 13.0605 84.3618 13.4908 84.1429 14.0306L81.8015 12.8927C82.0349 12.2654 82.3996 11.7256 82.8956 11.2734C83.4062 10.8066 84.0043 10.4419 84.69 10.1793C85.3756 9.91669 86.1196 9.7854 86.922 9.7854C87.8994 9.7854 88.7601 9.96775 89.5041 10.3325C90.2481 10.6826 90.8244 11.1786 91.2328 11.8205C91.6559 12.4478 91.8674 13.1845 91.8674 14.0306V21.952H89.154V19.9169L89.7667 19.8732C89.4603 20.3838 89.0956 20.8141 88.6726 21.1642C88.2495 21.4998 87.7681 21.7623 87.2284 21.952C86.6886 22.127 86.0905 22.2146 85.434 22.2146Z" fill="white"/>
+          <path d="M94.5169 21.952V10.048H97.2084V12.6958L96.9896 12.3019C97.2668 11.412 97.6971 10.792 98.2806 10.4419C98.8788 10.0918 99.5936 9.9167 100.425 9.9167H101.125V12.455H100.097C99.2799 12.455 98.6235 12.7103 98.1275 13.2209C97.6315 13.7169 97.3835 14.4172 97.3835 15.3216V21.952H94.5169Z" fill="white"/>
+          <path d="M106.312 22.2146C105.48 22.2146 104.758 22.076 104.146 21.7988C103.533 21.5216 103.059 21.1278 102.723 20.6172C102.388 20.092 102.22 19.4866 102.22 18.8009C102.22 18.1445 102.366 17.5609 102.658 17.0503C102.949 16.5252 103.402 16.0875 104.014 15.7374C104.627 15.3873 105.4 15.1393 106.334 14.9934L110.229 14.3588V16.547L106.881 17.116C106.312 17.2181 105.889 17.4005 105.612 17.663C105.335 17.9256 105.196 18.2685 105.196 18.6915C105.196 19.1 105.349 19.4282 105.656 19.6762C105.976 19.9096 106.37 20.0263 106.837 20.0263C107.435 20.0263 107.96 19.9023 108.413 19.6543C108.88 19.3918 109.237 19.0343 109.485 18.5821C109.748 18.1299 109.879 17.6339 109.879 17.0941V14.0306C109.879 13.52 109.675 13.0969 109.266 12.7614C108.872 12.4113 108.347 12.2362 107.691 12.2362C107.078 12.2362 106.531 12.404 106.049 12.7395C105.583 13.0605 105.24 13.4908 105.021 14.0306L102.68 12.8927C102.913 12.2654 103.278 11.7256 103.774 11.2734C104.284 10.8066 104.882 10.4419 105.568 10.1793C106.254 9.91669 106.998 9.7854 107.8 9.7854C108.777 9.7854 109.638 9.96775 110.382 10.3325C111.126 10.6826 111.702 11.1786 112.111 11.8205C112.534 12.4478 112.745 13.1845 112.745 14.0306V21.952H110.032V19.9169L110.645 19.8732C110.338 20.3838 109.974 20.8141 109.551 21.1642C109.128 21.4998 108.646 21.7623 108.106 21.952C107.567 22.127 106.968 22.2146 106.312 22.2146Z" fill="white"/>
+          <defs>
+            <clipPath id="ft-clip">
+              <rect width="36.7059" height="15.0588" fill="white" transform="translate(0 8.4707)"/>
+            </clipPath>
+          </defs>
+        </svg>
+        <p>Colour in your world. Track every country, city, and region you've ever visited.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn" aria-label="Instagram">
+            <svg viewBox="0 0 256 256" fill="currentColor"><path d="M176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24ZM128,176a48,48,0,1,1,48-48A48.05,48.05,0,0,1,128,176Zm60-96a12,12,0,1,1,12-12A12,12,0,0,1,188,80Zm-28,48a32,32,0,1,1-32-32A32,32,0,0,1,160,128Z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.87a8.18 8.18 0 004.78 1.52V6.94a4.84 4.84 0 01-1.01-.25z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Bluesky">
+            <svg viewBox="0 0 600 530" fill="currentColor"><path d="m135.72 44.03c66.496 49.921 138.02 151.14 164.28 205.46 26.262-54.316 97.782-155.54 164.28-205.46 47.98-36.021 125.72-63.892 125.72 24.795 0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.3797-3.6904-10.832-3.7077-7.8964-0.0173-2.9357-1.1937 0.51669-3.7077 7.8964-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.4491-163.25-81.433-5.9562-21.282-16.111-152.36-16.111-170.07 0-88.687 77.742-60.816 125.72-24.795z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Medium">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-links-group">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How it works</a></li>
+            <li><a href="#passport">Passport</a></li>
+            <li><a href="#regions">Regions &amp; Borders</a></li>
+            <li><a href="#friends">Friends</a></li>
+            <li><a href="badges.html">Badges</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-download">
+      <a href="#download" class="footer-store-btn" aria-label="Download on the App Store">
+        <img src="App Store link.svg" alt="Download on the App Store" width="125" height="42" />
+      </a>
+      <a href="#download" class="footer-store-btn" aria-label="Get it on Google Play">
+        <img src="Google Play link.svg" alt="Get it on Google Play" width="137" height="42" />
+      </a>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Novara. All rights reserved.</p>
+      <ul class="footer-bottom-links">
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Theme toggle — respects OS preference, allows manual override
+(function() {
+  const stored = localStorage.getItem('novara-theme');
+  if (stored) {
+    document.documentElement.setAttribute('data-theme', stored);
+  } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+  // Listen for OS changes (only if user hasn't manually overridden)
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('novara-theme')) {
+      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+    }
+  });
+})();
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('novara-theme', next);
+}
+
+// Scroll reveal animations
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// Stat counter — count up when scrolled into view
+function animateCounter(el) {
+  const target = +el.dataset.target;
+  const duration = 1500;
+  const start = performance.now();
+  const update = (now) => {
+    const progress = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+    el.textContent = Math.round(ease * target).toLocaleString();
+    if (progress < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateCounter(entry.target);
+      counterObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.hero-stat-num[data-target]').forEach(el => counterObserver.observe(el));
+
+// ── INTERACTIVE WORLD MAP ────────────────────────────────────
+(function() {
+  const wrap  = document.getElementById('mapInteractive');
+  const layer = document.getElementById('mapLayer');
+  const svg   = document.getElementById('mapSvg');
+  if (!wrap || !layer) return;
+
+  // ISO numeric IDs: Nigeria=566, UK=826, Japan=392, Brazil=76, Spain=724, Italy=380, South Africa=710, Australia=36
+  const visitedIds = new Set([566, 826, 392, 76, 724, 380, 710, 36]);
+
+  // Equirectangular projection to 960×500 viewport
+  function projectPt(lon, lat) {
+    return [(lon + 180) / 360 * 960, (90 - lat) / 180 * 500];
+  }
+  function ringToD(ring) {
+    // Split ring at antimeridian crossings (x jump > half viewport width)
+    const segments = [[]];
+    for (let i = 0; i < ring.length; i++) {
+      const pt = projectPt(ring[i][0], ring[i][1]);
+      const cur = segments[segments.length - 1];
+      if (cur.length > 0 && Math.abs(pt[0] - cur[cur.length - 1][0]) > 480) {
+        segments.push([]);
+      }
+      segments[segments.length - 1].push(pt);
+    }
+    return segments
+      .filter(s => s.length > 1)
+      .map(s => 'M' + s.map(([x, y]) => x.toFixed(1) + ',' + y.toFixed(1)).join('L') + 'Z')
+      .join('');
+  }
+  function geomToD(geom) {
+    if (!geom) return '';
+    if (geom.type === 'Polygon')
+      return geom.coordinates.map(ringToD).join('');
+    if (geom.type === 'MultiPolygon')
+      return geom.coordinates.map(poly => poly.map(ringToD).join('')).join('');
+    return '';
+  }
+
+  if (svg && typeof topojson !== 'undefined') {
+    fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+      .then(r => r.json())
+      .then(world => {
+        const features = topojson.feature(world, world.objects.countries).features;
+        // Draw base countries first (non-visited), then visited on top
+        let visitedEls = [], visitedCount = 0;
+        features.forEach(f => {
+          const d = geomToD(f.geometry);
+          if (!d) return;
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', d);
+          path.classList.add('map-country');
+          if (visitedIds.has(+f.id)) {
+            path.classList.add('visited');
+            path.style.animationDelay = (visitedCount * 0.5) + 's';
+            visitedCount++;
+            visitedEls.push(path);
+          } else {
+            svg.appendChild(path);
+          }
+        });
+        // Append visited countries last so they render on top
+        visitedEls.forEach(el => svg.appendChild(el));
+      })
+      .catch(() => {
+        const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        txt.setAttribute('x', '480'); txt.setAttribute('y', '250');
+        txt.setAttribute('text-anchor', 'middle');
+        txt.setAttribute('fill', 'rgba(255,255,255,.3)');
+        txt.setAttribute('font-size', '14');
+        txt.textContent = 'Map unavailable offline';
+        svg.appendChild(txt);
+      });
+  }
+
+  // Pan / zoom state
+  let tx = 0, ty = 0, scale = 1;
+  let dragging = false, startX = 0, startY = 0;
+  let lastPinchDist = 0;
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function applyTransform() {
+    layer.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+  }
+  function clampTranslate() {
+    const maxX = wrap.clientWidth  * (scale - 1) / 2 + 40;
+    const maxY = wrap.clientHeight * (scale - 1) / 2 + 40;
+    tx = clamp(tx, -maxX, maxX);
+    ty = clamp(ty, -maxY, maxY);
+  }
+
+  wrap.addEventListener('mousedown', e => {
+    dragging = true; wrap.classList.add('dragging');
+    startX = e.clientX - tx; startY = e.clientY - ty;
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    tx = e.clientX - startX; ty = e.clientY - startY;
+    clampTranslate(); applyTransform();
+  });
+  window.addEventListener('mouseup', () => { dragging = false; wrap.classList.remove('dragging'); });
+
+  wrap.addEventListener('wheel', e => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.12 : 0.12;
+    scale = clamp(scale + delta, 0.75, 4);
+    clampTranslate(); applyTransform();
+  }, { passive: false });
+
+  wrap.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      dragging = true;
+      startX = e.touches[0].clientX - tx;
+      startY = e.touches[0].clientY - ty;
+    } else if (e.touches.length === 2) {
+      lastPinchDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  wrap.addEventListener('touchmove', e => {
+    if (e.touches.length === 1 && dragging) {
+      tx = e.touches[0].clientX - startX;
+      ty = e.touches[0].clientY - startY;
+      clampTranslate(); applyTransform();
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      if (lastPinchDist) {
+        scale = clamp(scale * (dist / lastPinchDist), 0.75, 4);
+        clampTranslate(); applyTransform();
+      }
+      lastPinchDist = dist;
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', () => { dragging = false; lastPinchDist = 0; });
+
+  // Initial zoom on Nigeria
+  (function zoomToNigeria() {
+    const wrapW = wrap.clientWidth || 400;
+    const wrapH = wrap.clientHeight || 300;
+    scale = 2.5;
+    tx = -((501 - 480) / 960) * wrapW * scale;
+    ty = -((225 - 250) / 500) * wrapH * scale;
+    clampTranslate();
+    applyTransform();
+  })();
+})();
+
+// Close mobile menu on link click
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => {
+    document.querySelector('.nav-links').classList.remove('open');
+    const overlay = document.querySelector('.nav-mobile-overlay');
+    if (overlay) overlay.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
