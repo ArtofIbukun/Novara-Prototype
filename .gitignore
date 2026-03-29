@@ -1,0 +1,21 @@
+.DS_Store
+.claude/
+
+# Local deploy bundles
+netlify-deploy/
+netlify-deploy.zip
+netlify-deploy-min/
+netlify-deploy-min-v2/
+netlify-deploy-min-v3/
+netlify-deploy-min-root.zip
+netlify-deploy-min-root-v2.zip
+netlify-deploy-min-root-v3.zip
+
+# Local font source package; keep the extracted web fonts in /fonts
+/Nohemi/
+
+# Design exports and local captures
+Website Screenshots & recordings/
+Screenshot *.png
+*.mov
+*.af

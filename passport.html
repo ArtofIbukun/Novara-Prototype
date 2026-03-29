@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Passport — Novara</title>
+  <meta name="description" content="Your digital travel passport. Track every country, city, and region with a beautiful visual scorecard." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" href="fonts/nohemi/Nohemi-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/nohemi/Nohemi-Medium.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/nohemi/Nohemi-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/nohemi/Nohemi-Bold.woff2" as="font" type="font/woff2" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css" />
+  <style>
+    @font-face {
+      font-family: 'Nohemi';
+      src: url('fonts/nohemi/Nohemi-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Nohemi';
+      src: url('fonts/nohemi/Nohemi-Medium.woff2') format('woff2');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Nohemi';
+      src: url('fonts/nohemi/Nohemi-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Nohemi';
+      src: url('fonts/nohemi/Nohemi-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent:#4A5D3A; --accent-mid:#6B7F5A; --accent-lt:#8FA47A; --accent-pale:#EEF2EB;
+      --black:#1A1A1A; --white:#FFFFFF; --grey-50:#FAFAFA; --grey-100:#F5F5F5;
+      --grey-200:#E5E5E5; --grey-400:#9CA3AF; --grey-600:#6B7280; --text:#1A1A1A;
+      --nav-bg:rgba(255,255,255,0.97); --card-bg:#FFFFFF; --card-border:#EBEBEB;
+      --radius-sm:8px; --radius-md:12px; --radius-lg:16px;
+      --shadow-sm:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.02);
+      --shadow-md:0 4px 16px rgba(0,0,0,.06),0 2px 6px rgba(0,0,0,.03);
+      --shadow-lg:0 12px 36px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+    }
+    html { scroll-behavior: smooth; }
+    h1,h2,h3,h4,h5,h6 { font-family: 'Nohemi','Montserrat','Inter',sans-serif; }
+    body { font-family: 'Inter',sans-serif; color: var(--text); background: var(--white); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+    /* ── NAV ──────────────────────────────────────────── */
+    .nav {
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 12px 32px;
+      background: rgba(255,255,255,.72); backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255,255,255,.45); border-radius: 100px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.06),0 1px 4px rgba(0,0,0,.03);
+      z-index: 100; max-width: calc(100% - 32px); white-space: nowrap;
+    }
+    .nav-left { display: flex; align-items: center; margin-right: 28px; }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
+    .nav-logo-img { height: 26px; width: auto; }
+    .nav-center { display: flex; align-items: center; gap: 24px; list-style: none; }
+    .nav-center a { font-family:'Inter',sans-serif; font-size: 13px; font-weight: 500; color: var(--grey-600); text-decoration: none; transition: color .2s; letter-spacing: .02em; }
+    .nav-center a:hover { color: var(--text); }
+    .nav-right { display: flex; align-items: center; gap: 16px; margin-left: 28px; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px; font-size: 12px; font-weight: 600;
+      font-family:'Inter',sans-serif; color: rgba(30,30,30,.9);
+      background: rgba(180,180,180,.2); backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(180,180,180,.35); border-radius: 100px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06),inset 0 1px 0 rgba(255,255,255,.7);
+      cursor: pointer; text-decoration: none; transition: background .2s,transform .2s,box-shadow .2s;
+    }
+    .btn-primary:hover { background: rgba(180,180,180,.32); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.1); }
+    .nav-hamburger { display: none; background: none; border: none; font-size: 24px; color: var(--text); cursor: pointer; padding: 4px; }
+
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      padding: 160px 56px 80px; text-align: center;
+      background: linear-gradient(135deg, var(--accent-pale) 0%, #fff 60%);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url('Topographic 1.svg'); background-size: cover;
+      opacity: .04; pointer-events: none;
+    }
+    .hero > * { position: relative; z-index: 1; }
+    .hero .tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family:'Inter',sans-serif; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .1em; color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .hero .tag::before { content: ''; width: 32px; height: 2px; background: var(--accent); }
+    .hero h1 {
+      font-size: clamp(40px, 5.5vw, 64px); font-weight: 700; line-height: 1.08;
+      color: var(--text); max-width: 700px; margin: 0 auto;
+    }
+    .hero .subtitle {
+      font-size: 17px; color: var(--grey-600); margin-top: 16px;
+      max-width: 520px; margin-inline: auto; line-height: 1.7;
+    }
+    .hero-passport {
+      margin-top: 48px; display: inline-block;
+      filter: drop-shadow(0 24px 48px rgba(0,0,0,.12));
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+    }
+    .hero-passport:hover { transform: translateY(-8px) rotate(-1deg); }
+    .hero-passport img { width: 280px; height: auto; }
+
+    /* ── STATS STRIP ─────────────────────────────────── */
+    .stats-strip {
+      padding: 0 56px;
+      margin-top: -40px; position: relative; z-index: 2;
+    }
+    .stats-inner {
+      max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 0;
+      background: var(--white); border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg); overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .stat-item {
+      padding: 28px 16px; text-align: center;
+      border-right: 1px solid var(--grey-200);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-number {
+      font-family: 'Nohemi','Montserrat','Inter',sans-serif; font-size: 32px; font-weight: 700;
+      color: var(--accent); line-height: 1;
+    }
+    .stat-number small { font-size: 16px; font-weight: 500; }
+    .stat-label {
+      font-size: 12px; font-weight: 500; color: var(--grey-400);
+      text-transform: uppercase; letter-spacing: .06em; margin-top: 6px;
+    }
+
+    /* ── FEATURES GRID ───────────────────────────────── */
+    .features {
+      max-width: 1100px; margin: 0 auto;
+      padding: 100px 56px;
+    }
+    .features .section-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--accent); margin-bottom: 12px;
+    }
+    .features .section-tag::before { content: ''; width: 32px; height: 2px; background: var(--accent); }
+    .features h2 { font-size: clamp(28px, 3.5vw, 42px); font-weight: 700; line-height: 1.15; margin-bottom: 16px; }
+    .features .section-sub { font-size: 16px; color: var(--grey-600); max-width: 560px; margin-bottom: 56px; }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .feature-card {
+      background: var(--white); border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg); padding: 32px 28px;
+      transition: transform .2s, box-shadow .2s;
+      position: relative; overflow: hidden;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .feature-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%);
+      transform: translateX(-120%);
+      pointer-events: none; z-index: 1;
+    }
+    @keyframes cardShimmer {
+      0%   { transform: translateX(-120%); }
+      100% { transform: translateX(120%); }
+    }
+    .feature-card:hover::before { animation: cardShimmer .55s ease forwards; }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--accent-pale); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 20px;
+    }
+    .feature-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .feature-card p { font-size: 14px; color: var(--grey-600); line-height: 1.6; }
+
+    /* ── PASSPORT SHOWCASE ───────────────────────────── */
+    .showcase {
+      background: var(--grey-50); padding: 100px 56px;
+      position: relative; overflow: hidden;
+    }
+    .showcase::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url('Topographic 5.svg'); background-size: cover;
+      opacity: .03; pointer-events: none;
+    }
+    .showcase > * { position: relative; z-index: 1; }
+    .showcase-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .showcase-text .section-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--accent); margin-bottom: 12px;
+    }
+    .showcase-text .section-tag::before { content: ''; width: 32px; height: 2px; background: var(--accent); }
+    .showcase-text h2 { font-size: clamp(28px, 3.5vw, 42px); font-weight: 700; line-height: 1.15; margin-bottom: 16px; }
+    .showcase-text p { font-size: 15px; color: var(--grey-600); line-height: 1.7; margin-bottom: 20px; }
+    .showcase-list { list-style: none; }
+    .showcase-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 14px; color: var(--grey-600); line-height: 1.6; margin-bottom: 14px;
+    }
+    .showcase-list li i { color: var(--accent); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
+    .showcase-visual { text-align: center; }
+    .showcase-stamps {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      max-width: 360px; margin: 0 auto;
+    }
+    .stamp-card {
+      background: var(--white); border: 1px solid var(--card-border);
+      border-radius: var(--radius-md); padding: 20px;
+      text-align: center; transition: transform .2s, box-shadow .2s;
+    }
+    .stamp-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .stamp-card img { width: 64px; height: 64px; margin-bottom: 10px; }
+    .stamp-card .stamp-country { font-size: 13px; font-weight: 600; color: var(--text); }
+    .stamp-card .stamp-date { font-size: 11px; color: var(--grey-400); margin-top: 2px; }
+
+    /* ── HOW IT WORKS ────────────────────────────────── */
+    .how-it-works {
+      max-width: 1100px; margin: 0 auto;
+      padding: 100px 56px; text-align: center;
+    }
+    .how-it-works .section-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--accent); margin-bottom: 12px;
+    }
+    .how-it-works .section-tag::before { content: ''; width: 32px; height: 2px; background: var(--accent); }
+    .how-it-works h2 { font-size: clamp(28px, 3.5vw, 42px); font-weight: 700; line-height: 1.15; margin-bottom: 56px; }
+    .steps {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+      text-align: center;
+    }
+    .step-num {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: 'Nohemi','Montserrat','Inter',sans-serif; font-size: 18px; font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .step h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .step p { font-size: 13px; color: var(--grey-600); line-height: 1.6; }
+
+    /* ── SHARE SECTION ───────────────────────────────── */
+    .share {
+      background: var(--accent); padding: 80px 56px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .share::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url('Topographic 6.svg'); background-size: cover;
+      opacity: .06; pointer-events: none;
+    }
+    .share > * { position: relative; z-index: 1; }
+    .share h2 {
+      font-size: clamp(28px, 3.5vw, 42px); font-weight: 700;
+      color: #fff; line-height: 1.15; margin-bottom: 16px;
+    }
+    .share p { font-size: 16px; color: rgba(255,255,255,.7); max-width: 500px; margin: 0 auto 32px; }
+    .share-methods {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    }
+    .share-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 28px; border-radius: 100px;
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+      color: #fff; font-family: 'Inter',sans-serif; font-size: 14px; font-weight: 600;
+      text-decoration: none; cursor: pointer;
+      transition: background .2s, transform .2s, box-shadow .2s;
+    }
+    .share-btn:hover {
+      background: rgba(255,255,255,.25);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,.15);
+    }
+    .share-btn i { font-size: 20px; }
+
+    /* ── CTA + FOOTER ────────────────────────────────── */
+    .cta-footer-section { position: relative; overflow: hidden; }
+    .cta-footer-bg { position: absolute; inset: 0; z-index: 0; }
+    .cta-footer-bg img { width: 100%; height: 100%; object-fit: cover; }
+    .cta-footer-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,.6) 15%, rgba(0,0,0,.3) 40%, rgba(0,0,0,.85) 70%, rgba(26,26,26,1) 100%);
+    }
+    .cta-content {
+      position: relative; z-index: 1; text-align: center;
+      padding: 80px 56px 50px; max-width: 680px; margin: 0 auto;
+    }
+    .cta-content h2 {
+      font-family:'Nohemi','Montserrat','Inter',sans-serif; font-size: clamp(26px,3.5vw,40px);
+      font-weight: 600; color: #fff; font-style: italic; line-height: 1.25; margin-top: 20px;
+    }
+    .cta-content .cta-sub { font-size: 14px; color: rgba(255,255,255,.65); margin-top: 16px; line-height: 1.6; }
+    .cta-stores { display: flex; gap: 12px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+    .btn-store {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 12px 24px; border-radius: 100px; font-family:'Inter',sans-serif;
+      font-size: 14px; font-weight: 600; text-decoration: none;
+      transition: transform .2s, background .2s, box-shadow .2s;
+    }
+    .btn-store:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.2); }
+    .btn-store i { font-size: 22px; line-height: 1; }
+    .btn-store small { font-size: 10px; font-weight: 400; opacity: .7; display: block; text-align: left; line-height: 1; }
+    .btn-store span { display: flex; flex-direction: column; }
+    .footer-overlay { position: relative; z-index: 1; padding: 60px 56px 0; background: #1A1A1A; }
+    .footer-columns { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .footer-col h4 { font-family:'Nohemi','Montserrat','Inter',sans-serif; font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .04em; }
+    .footer-col-brand p { font-size: 13px; color: rgba(255,255,255,.5); line-height: 1.6; max-width: 280px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a, .footer-col ul li { font-size: 13px; color: rgba(255,255,255,.5); text-decoration: none; transition: color .2s; }
+    .footer-col ul li a:hover { color: #fff; }
+    .footer-legal {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 0; font-size: 12px; color: rgba(255,255,255,.35);
+    }
+    .footer-legal-links { display: flex; gap: 16px; }
+    .footer-legal-links a { color: rgba(255,255,255,.35); text-decoration: none; transition: color .2s; }
+    .footer-legal-links a:hover { color: rgba(255,255,255,.7); }
+    .footer-legal-links span { color: rgba(255,255,255,.15); }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav { padding: 10px 16px; }
+      .nav-center { display: none; }
+      .nav-hamburger { display: block; }
+      .hero { padding: 130px 24px 60px; }
+      .hero-passport img { width: 200px; }
+      .stats-strip { padding: 0 24px; margin-top: -24px; }
+      .stats-inner { grid-template-columns: repeat(3, 1fr); }
+      .stat-item:nth-child(4) { border-right: none; }
+      .features { padding: 60px 24px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .showcase { padding: 60px 24px; }
+      .showcase-inner { grid-template-columns: 1fr; gap: 40px; }
+      .how-it-works { padding: 60px 24px; }
+      .steps { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .share { padding: 60px 24px; }
+      .footer-columns { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-legal { flex-direction: column; gap: 12px; text-align: center; }
+      .cta-content { padding: 60px 24px 40px; }
+      .footer-overlay { padding: 40px 24px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo"><img src="Novara Coloured Logo.svg" alt="Novara" class="nav-logo-img" /></a>
+  </div>
+  <ul class="nav-center">
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="index.html#how-it-works">How it works</a></li>
+    <li><a href="passport.html">Passport</a></li>
+    <li><a href="index.html#compare">Compare</a></li>
+    <li><a href="badges.html">Badges</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="btn-primary">Sign In</a>
+  </div>
+  <button class="nav-hamburger" aria-label="Menu"><i class="ph ph-list"></i></button>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="tag">Travel Passport</div>
+  <h1>Your Personal Travel Passport</h1>
+  <p class="subtitle">A living record of everywhere you've been. Every stamp tells a story, every colour reveals a new chapter.</p>
+  <div class="hero-passport">
+    <img src="Passport.svg" alt="Novara Passport" />
+  </div>
+</section>
+
+<!-- Stats Strip -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <div class="stat-number">7</div>
+      <div class="stat-label">Trips</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">24</div>
+      <div class="stat-label">Countries</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">41</div>
+      <div class="stat-label">Cities</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">5</div>
+      <div class="stat-label">Continents</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">12<small>%</small></div>
+      <div class="stat-label">World</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">86</div>
+      <div class="stat-label">Days</div>
+    </div>
+  </div>
+</div>
+
+<!-- Features Grid -->
+<section class="features">
+  <div class="section-tag">What's inside</div>
+  <h2>More than a travel tracker</h2>
+  <p class="section-sub">Your passport is packed with features designed to make every journey memorable and every destination meaningful.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><i class="ph-fill ph-globe-hemisphere-west"></i></div>
+      <h3>Interactive World Map</h3>
+      <p>Colour in every country you've visited. Pan, zoom, and explore your personal map with rich detail.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="ph-fill ph-stamp"></i></div>
+      <h3>Digital Stamps</h3>
+      <p>Collect unique passport stamps for every country. Each stamp captures the culture and spirit of the destination.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="ph-fill ph-chart-bar"></i></div>
+      <h3>Travel Scorecard</h3>
+      <p>Track your trips, countries, cities, and continents with a beautiful at-a-glance scorecard.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="ph-fill ph-map-trifold"></i></div>
+      <h3>Regions &amp; Borders</h3>
+      <p>Go beyond countries. Track states, provinces, and territories with customisable border settings.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="ph-fill ph-calendar-dots"></i></div>
+      <h3>Trip Timeline</h3>
+      <p>A chronological record of every journey. Add dates, notes, and photos to build your travel story.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="ph-fill ph-share-network"></i></div>
+      <h3>Share &amp; Compare</h3>
+      <p>Share your passport with friends, compare maps side-by-side, and see who's explored more of the world.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Passport Stamps Showcase -->
+<section class="showcase">
+  <div class="showcase-inner">
+    <div class="showcase-text">
+      <div class="section-tag">Collect them all</div>
+      <h2>Stamps from around the world</h2>
+      <p>Every country you visit earns a unique digital stamp in your passport. Each one is inspired by the culture, landmarks, and colours of the destination.</p>
+      <ul class="showcase-list">
+        <li><i class="ph-fill ph-check-circle"></i> Beautifully designed stamps for 195+ countries</li>
+        <li><i class="ph-fill ph-check-circle"></i> Auto-collected when you log a trip</li>
+        <li><i class="ph-fill ph-check-circle"></i> Unlock special edition stamps for milestones</li>
+        <li><i class="ph-fill ph-check-circle"></i> Share individual stamps on social media</li>
+      </ul>
+    </div>
+    <div class="showcase-visual">
+      <div class="showcase-stamps">
+        <div class="stamp-card">
+          <img src="made-in/nigeria/04.svg" alt="Nigeria stamp" />
+          <div class="stamp-country">Nigeria</div>
+          <div class="stamp-date">Mar 2024</div>
+        </div>
+        <div class="stamp-card">
+          <img src="made-in/ireland/07.svg" alt="Ireland stamp" />
+          <div class="stamp-country">Ireland</div>
+          <div class="stamp-date">Jun 2024</div>
+        </div>
+        <div class="stamp-card">
+          <img src="made-in/mexico/06.svg" alt="Mexico stamp" />
+          <div class="stamp-country">Mexico</div>
+          <div class="stamp-date">Sep 2025</div>
+        </div>
+        <div class="stamp-card">
+          <img src="made-in/indonesia/06.svg" alt="Indonesia stamp" />
+          <div class="stamp-country">Indonesia</div>
+          <div class="stamp-date">Dec 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+  <div class="section-tag">Getting started</div>
+  <h2>Four steps to your passport</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Download Novara</h3>
+      <p>Available free on iOS and Android. Create your account in under a minute.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Log your first trip</h3>
+      <p>Add the countries and cities you've already visited. Watch your map light up.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Collect stamps</h3>
+      <p>Every destination earns a unique stamp. Build your collection as you travel.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Share your journey</h3>
+      <p>Export your passport, share your map, and compare with friends around the world.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Share Section -->
+<section class="share">
+  <h2>Share your passport</h2>
+  <p>Show the world where you've been. Export your passport and share it however you like.</p>
+  <div class="share-methods">
+    <a href="#" class="share-btn"><i class="ph-fill ph-instagram-logo"></i> Instagram Story</a>
+    <a href="#" class="share-btn"><i class="ph-fill ph-image"></i> Save as Image</a>
+    <a href="#" class="share-btn"><i class="ph-fill ph-link"></i> Copy Link</a>
+    <a href="#" class="share-btn"><i class="ph-fill ph-file-pdf"></i> Export PDF</a>
+  </div>
+</section>
+
+<!-- CTA + Footer -->
+<section class="cta-footer-section">
+  <div class="cta-footer-bg">
+    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=2000&q=80" alt="Mountains" loading="lazy" />
+  </div>
+  <div class="cta-content">
+    <img src="Novara White Icon.svg" alt="Novara" style="height:40px;width:auto;" />
+    <h2>Find the perfect trip for you and discover extraordinary adventures with us!</h2>
+    <p class="cta-sub">Embark on a journey of exploration and excitement as we guide you towards unforgettable experiences across the globe.</p>
+    <div class="cta-stores">
+      <a href="#" class="btn-store" style="background:white;color:#1A1A1A;border:none;">
+        <i class="ph-fill ph-apple-logo"></i>
+        <span><small>Download on the</small>App Store</span>
+      </a>
+      <a href="#" class="btn-store" style="background:#333;color:#fff;border:none;">
+        <i class="ph-fill ph-google-play-logo"></i>
+        <span><small>Get it on</small>Google Play</span>
+      </a>
+    </div>
+  </div>
+  <div class="footer-overlay">
+    <div class="footer-columns">
+      <div class="footer-col footer-col-brand">
+        <h4>NOVARA</h4>
+        <p>Your gateway to tracking every country, city, and region you've explored. Colour in your world, one destination at a time.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigations</h4>
+        <ul>
+          <li><a href="index.html#features">Features</a></li>
+          <li><a href="index.html#how-it-works">How it works</a></li>
+          <li><a href="passport.html">Passport</a></li>
+          <li><a href="badges.html">Badges</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Social</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">X</a></li>
+          <li><a href="#">TikTok</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul>
+          <li>hello@novara.app</li>
+          <li>Available on iOS &amp; Android</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <span>&copy; 2026 Novara. All rights reserved.</span>
+      <div class="footer-legal-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <span>|</span>
+        <a href="terms.html">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
