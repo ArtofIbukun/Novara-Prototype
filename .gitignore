@@ -19,3 +19,11 @@ Website Screenshots & recordings/
 Screenshot *.png
 *.mov
 *.af
+
+# Unused local reference assets
+original-*.webp
+096373*.webp
+927b22*.webp
+made-in/italy/
+made-in/sweden/
+made-in/usa/
